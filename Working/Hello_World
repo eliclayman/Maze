@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mount Scopus Arrival Guide</title>
+  <style>
+    :root {
+      --bg: #f3ead9;
+      --bg-deep: #dcc6a2;
+      --panel: rgba(255, 250, 243, 0.88);
+      --panel-strong: rgba(255, 248, 239, 0.97);
+      --text: #1f211d;
+      --muted: #5d625a;
+      --line: rgba(41, 51, 46, 0.12);
+      --accent: #0f6a66;
+      --accent-soft: rgba(15, 106, 102, 0.12);
+      --gold: #b88439;
+      --brick: #b8573f;
+      --shadow: 0 22px 60px rgba(67, 52, 25, 0.14);
+      --headline: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      --body: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--body);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.72), transparent 26%),
+        radial-gradient(circle at 85% 12%, rgba(184, 132, 57, 0.18), transparent 24%),
+        linear-gradient(145deg, var(--bg), var(--bg-deep));
+      min-height: 100vh;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr 0.95fr;
+      gap: 22px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 34px;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: auto -50px -70px auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 106, 102, 0.18), transparent 67%);
+      z-index: -1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.62);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--headline);
+      font-size: clamp(2.55rem, 5vw, 4.85rem);
+      line-height: 0.94;
+      max-width: 11ch;
+    }
+
+    .hero-copy {
+      max-width: 59ch;
+      margin-top: 16px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1.05rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .hero-chip {
+      padding: 14px 14px 15px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.63);
+      border: 1px solid rgba(41, 51, 46, 0.08);
+    }
+
+    .hero-chip strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .hero-chip span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .planner {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .planner h2,
+    .section-title {
+      margin: 0;
+      font-size: 0.94rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--accent);
+    }
+
+    .planner-copy {
+      margin: -6px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.94rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    select,
+    button {
+      font: inherit;
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid rgba(41, 51, 46, 0.12);
+      border-radius: 16px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.84);
+      color: var(--text);
+    }
+
+    .planner-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .button:hover,
+    .button:focus-visible {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(31, 33, 29, 0.14);
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--accent), #158985);
+      color: #f8fffd;
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.75);
+      color: var(--text);
+      border: 1px solid rgba(41, 51, 46, 0.1);
+    }
+
+    .route-summary {
+      padding: 16px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(15, 106, 102, 0.1), rgba(184, 132, 57, 0.1));
+      border: 1px solid rgba(15, 106, 102, 0.12);
+    }
+
+    .route-summary strong {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 1.02rem;
+    }
+
+    .route-summary span {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.93rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .sidebar {
+      display: grid;
+      gap: 18px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .side-card {
+      padding: 22px;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .side-card p,
+    .side-card li {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .side-card ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+    }
+
+    .direction-compass {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .compass-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .compass-pill {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .main {
+      display: grid;
+      gap: 22px;
+    }
+
+    .map-card,
+    .route-card,
+    .landmark-card {
+      padding: 24px;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .campus-strip {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 248, 239, 0.96)),
+        linear-gradient(90deg, rgba(15, 106, 102, 0.06), rgba(184, 132, 57, 0.08));
+      border: 1px solid rgba(41, 51, 46, 0.08);
+    }
+
+    .spine {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .stop {
+      position: relative;
+      padding: 16px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(41, 51, 46, 0.08);
+    }
+
+    .stop::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 5px);
+      width: calc(100% - 10px);
+      height: 2px;
+      background: linear-gradient(90deg, rgba(15, 106, 102, 0.4), rgba(184, 132, 57, 0.4));
+      transform: translateY(-50%);
+    }
+
+    .stop:last-child::after {
+      display: none;
+    }
+
+    .stop strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.93rem;
+    }
+
+    .stop span {
+      color: var(--muted);
+      line-height: 1.4;
+      font-size: 0.84rem;
+    }
+
+    .route-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 18px;
+    }
+
+    .route-header h3 {
+      margin: 0 0 7px;
+      font-size: clamp(1.5rem, 2.6vw, 2rem);
+      font-family: var(--headline);
+      line-height: 1.05;
+    }
+
+    .route-header p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .route-badge {
+      min-width: 126px;
+      padding: 12px 14px;
+      border-radius: 20px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(184, 132, 57, 0.17), rgba(15, 106, 102, 0.16));
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    .route-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .meta-chip {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(41, 51, 46, 0.08);
+    }
+
+    .meta-chip strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+
+    .meta-chip span {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.4;
+    }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+      counter-reset: route-step;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(41, 51, 46, 0.08);
+    }
+
+    .step::before {
+      counter-increment: route-step;
+      content: counter(route-step);
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #f8fffd;
+      font-weight: 800;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.97rem;
+    }
+
+    .step span {
+      color: var(--muted);
+      line-height: 1.52;
+    }
+
+    .route-note {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(184, 132, 57, 0.11);
+      border: 1px solid rgba(184, 132, 57, 0.18);
+      color: #59411f;
+      line-height: 1.55;
+    }
+
+    .map-preview {
+      margin-bottom: 18px;
+      padding: 16px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at top right, rgba(184, 132, 57, 0.18), transparent 30%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(246, 238, 225, 0.96));
+      border: 1px solid rgba(41, 51, 46, 0.08);
+    }
+
+    .map-preview-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .map-preview-head strong {
+      font-size: 0.98rem;
+    }
+
+    .map-preview-head span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .map-shell {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 612 / 430;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #f7f2e8;
+      border: 1px solid rgba(41, 51, 46, 0.08);
+    }
+
+    .mini-map-image,
+    .mini-map-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .mini-map-image {
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .mini-map-overlay {
+      display: block;
+    }
+
+    .map-legend {
+      display: flex;
+      gap: 8px 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .landmarks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .landmark-card h4 {
+      margin: 0 0 8px;
+      font-size: 1.02rem;
+    }
+
+    .landmark-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(15, 106, 102, 0.1);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .footer {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(41, 51, 46, 0.08);
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.92rem;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .spine {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .stop::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 18px, 1180px);
+        padding-top: 16px;
+      }
+
+      .hero-card,
+      .map-card,
+      .route-card,
+      .planner,
+      .landmark-card {
+        border-radius: 24px;
+      }
+
+      .hero-grid,
+      .route-meta,
+      .landmarks {
+        grid-template-columns: 1fr;
+      }
+
+      .route-header {
+        flex-direction: column;
+      }
+
+      .route-badge {
+        min-width: 0;
+        width: 100%;
+      }
+
+      .spine {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div class="card hero-card">
+        <div class="eyebrow">Hebrew University · Mount Scopus</div>
+        <h1>Arrive calm. Find your building fast.</h1>
+        <p class="hero-copy">
+          A first-day guide for people reaching Mount Scopus campus. Use the route planner to get simple walking
+          directions between the main landmarks new students usually need first: the main gate, Rothberg, the
+          library area, Humanities, Social Sciences, and Law.
+        </p>
+        <div class="hero-grid">
+          <div class="hero-chip">
+            <strong>Start with one anchor</strong>
+            <span>Frank Sinatra Square and the Bloomfield Library are the easiest central reference point.</span>
+          </div>
+          <div class="hero-chip">
+            <strong>Follow the spine</strong>
+            <span>Most first-day routes make sense if you walk back to the main pedestrian axis first.</span>
+          </div>
+          <div class="hero-chip">
+            <strong>Read the signs by faculty</strong>
+            <span>Once you reach the right zone, building blocks and room numbers become much easier to follow.</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="card planner">
+        <h2>Route Planner</h2>
+        <p class="planner-copy">
+          Choose where you are and where you need to go. The guide will give you clear walking steps in plain language.
+        </p>
+
+        <div class="field">
+          <label for="fromSelect">I am starting at</label>
+          <select id="fromSelect"></select>
+        </div>
+
+        <div class="field">
+          <label for="toSelect">I need to reach</label>
+          <select id="toSelect"></select>
+        </div>
+
+        <div class="planner-actions">
+          <button class="button button-primary" id="swapButton" type="button">Swap route</button>
+          <button class="button button-secondary" id="centralButton" type="button">Route via campus center</button>
+        </div>
+
+        <div class="route-summary" id="plannerSummary">
+          <strong>Quick read</strong>
+          <span>Pick two places to see your route.</span>
+        </div>
+      </aside>
+    </section>
+
+    <section class="layout">
+      <aside class="sidebar">
+        <div class="side-card">
+          <h2 class="section-title">How To Orient Yourself</h2>
+          <div class="direction-compass">
+            <div class="compass-row">
+              <div class="compass-pill">Campus center: Frank Sinatra / Library</div>
+            </div>
+            <div class="compass-row">
+              <div class="compass-pill">North side: Humanities</div>
+              <div class="compass-pill">South side: Social Sciences</div>
+            </div>
+            <div class="compass-row">
+              <div class="compass-pill">East side: Law + Rothberg</div>
+              <div class="compass-pill">Main arrival edge: Main Gate</div>
+            </div>
+          </div>
+          <ul>
+            <li>If you feel lost, first ask someone for Frank Sinatra Square or the library.</li>
+            <li>When moving between faculties, returning to the central pedestrian area is usually the easiest choice.</li>
+            <li>After you reach the correct faculty zone, use the local block signs for the exact classroom.</li>
+          </ul>
+        </div>
+
+        <div class="side-card">
+          <h2 class="section-title">Best First Stop</h2>
+          <p>
+            If this is your first time on campus, the safest navigation strategy is: reach the central library area,
+            confirm your orientation, then continue to your faculty.
+          </p>
+          <p>
+            The Bloomfield Library is officially described as being between the Faculties of Humanities and Social
+            Sciences, which makes it a very useful mental midpoint.
+          </p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="map-card">
+          <h2 class="section-title">Simple Campus Logic</h2>
+          <div class="campus-strip">
+            <div class="spine" id="spine"></div>
+          </div>
+          <div class="footer">
+            This page is designed as a practical first-arrival guide, not a formal architectural map. It keeps the
+            wording simple so new students can move confidently between the main landmarks. For an official reference,
+            use the <a href="https://campaign.huji.ac.il/campus-maps" target="_blank" rel="noreferrer">Hebrew University campus maps page</a>.
+          </div>
+        </section>
+
+        <section class="route-card">
+          <div class="route-header">
+            <div>
+              <h3 id="routeTitle">Choose a route</h3>
+              <p id="routeSubtitle">Your step-by-step directions will appear here.</p>
+            </div>
+            <div class="route-badge" id="routeBadge">Walking guide</div>
+          </div>
+
+          <div class="map-preview">
+            <div class="map-preview-head">
+              <strong>Route Map</strong>
+              <span id="mapCaption">The highlighted line changes with your selected route.</span>
+            </div>
+            <div class="map-shell">
+              <img class="mini-map-image" src="mt-scopus-map.png" alt="Mount Scopus campus map">
+              <svg class="mini-map-overlay" id="miniMap" viewBox="0 0 612 430" aria-label="Mount Scopus route map">
+                <defs>
+                  <linearGradient id="routeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#0f6a66"></stop>
+                    <stop offset="100%" stop-color="#b88439"></stop>
+                  </linearGradient>
+                </defs>
+
+                <path id="routeHalo" d="" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path id="routeLine" d="" fill="none" stroke="url(#routeGlow)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"></path>
+                <g id="mapNodes"></g>
+              </svg>
+            </div>
+
+            <div class="map-legend">
+              <div class="legend-item"><span class="legend-dot" style="background:#0f6a66"></span>Start</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#b8573f"></span>Destination</div>
+              <div class="legend-item"><span class="legend-dot" style="background:#b88439"></span>Highlighted route</div>
+            </div>
+          </div>
+
+          <div class="route-meta" id="routeMeta"></div>
+          <div class="steps" id="routeSteps"></div>
+          <div class="route-note" id="routeNote">
+            Tip: if the signs around you feel confusing, walk back toward the central library and Frank Sinatra area,
+            then continue from there.
+          </div>
+        </section>
+
+        <section>
+          <h2 class="section-title">Main Landmarks</h2>
+          <div class="landmarks" id="landmarks"></div>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const places = [
+      {
+        id: "main-gate",
+        name: "Main Gate",
+        zone: "Arrival edge",
+        walkFromCenter: "6-8 min",
+        anchor: "Best starting point if you arrived by campus entrance or main bus drop-off.",
+        summary: "Your arrival point before you enter the main pedestrian axis of campus."
+      },
+      {
+        id: "frank-sinatra",
+        name: "Frank Sinatra Square / Bloomfield Library",
+        zone: "Campus center",
+        walkFromCenter: "0 min",
+        anchor: "The easiest central orientation point for new arrivals.",
+        summary: "The library zone sits between Humanities and Social Sciences and works as the main navigation anchor."
+      },
+      {
+        id: "humanities",
+        name: "Humanities Faculty",
+        zone: "North side",
+        walkFromCenter: "2-4 min",
+        anchor: "Use this when heading to humanities classrooms and nearby institutes.",
+        summary: "The Humanities area is one of the two main faculty zones framing the central library area."
+      },
+      {
+        id: "social-sciences",
+        name: "Social Sciences Faculty",
+        zone: "South side",
+        walkFromCenter: "2-4 min",
+        anchor: "This is where many social sciences departments and classroom blocks are located.",
+        summary: "The Social Sciences buildings sit on the opposite side of the central library from Humanities."
+      },
+      {
+        id: "law",
+        name: "Faculty of Law",
+        zone: "East side",
+        walkFromCenter: "5-7 min",
+        anchor: "Stay on the main path until you see the Law signs, then enter the faculty area.",
+        summary: "Law is one of the prominent eastern-campus destinations and is easier to reach from the central spine."
+      },
+      {
+        id: "rothberg",
+        name: "Rothberg International School",
+        zone: "East side",
+        walkFromCenter: "6-8 min",
+        anchor: "A common first-day destination for international students and visitors.",
+        summary: "Rothberg sits on the eastern side of Mount Scopus and is easiest to find by staying on the main campus route."
+      }
+    ];
+
+    const edges = {
+      "main-gate": {
+        "frank-sinatra": {
+          minutes: 7,
+          text: "Enter through the Main Gate and continue on the main pedestrian road until the campus opens into the Frank Sinatra Square and library area."
+        }
+      },
+      "frank-sinatra": {
+        "main-gate": {
+          minutes: 7,
+          text: "Face away from the library area and follow the main pedestrian road back to the Main Gate without leaving the central path."
+        },
+        "humanities": {
+          minutes: 3,
+          text: "From Frank Sinatra Square, keep the library behind or beside you and head toward the Humanities signs on the north side of the central area."
+        },
+        "social-sciences": {
+          minutes: 3,
+          text: "From Frank Sinatra Square, follow the signs toward Social Sciences on the opposite side of the library area."
+        },
+        "law": {
+          minutes: 6,
+          text: "Stay on the main pedestrian spine heading east from Frank Sinatra Square and keep following the Law Faculty signs."
+        },
+        "rothberg": {
+          minutes: 7,
+          text: "Continue east from Frank Sinatra Square on the main campus route and follow signs for Rothberg International School."
+        }
+      },
+      "humanities": {
+        "frank-sinatra": {
+          minutes: 3,
+          text: "Leave the Humanities blocks toward the central open area and aim for Frank Sinatra Square and the library."
+        }
+      },
+      "social-sciences": {
+        "frank-sinatra": {
+          minutes: 3,
+          text: "Walk out of Social Sciences toward the central library zone and Frank Sinatra Square."
+        }
+      },
+      "law": {
+        "frank-sinatra": {
+          minutes: 6,
+          text: "Exit the Law area to the main pedestrian route and walk back west toward Frank Sinatra Square and the library."
+        },
+        "rothberg": {
+          minutes: 3,
+          text: "Stay on the eastern campus side and follow the nearby signs from Law toward Rothberg International School."
+        }
+      },
+      "rothberg": {
+        "frank-sinatra": {
+          minutes: 7,
+          text: "Leave Rothberg on the main campus walkway and head back west until you return to Frank Sinatra Square and the library zone."
+        },
+        "law": {
+          minutes: 3,
+          text: "From Rothberg, stay on the eastern side of campus and follow the Law Faculty signs."
+        }
+      }
+    };
+
+    const fromSelect = document.getElementById("fromSelect");
+    const toSelect = document.getElementById("toSelect");
+    const swapButton = document.getElementById("swapButton");
+    const centralButton = document.getElementById("centralButton");
+    const plannerSummary = document.getElementById("plannerSummary");
+    const routeTitle = document.getElementById("routeTitle");
+    const routeSubtitle = document.getElementById("routeSubtitle");
+    const routeBadge = document.getElementById("routeBadge");
+    const routeMeta = document.getElementById("routeMeta");
+    const routeSteps = document.getElementById("routeSteps");
+    const routeNote = document.getElementById("routeNote");
+    const routeHalo = document.getElementById("routeHalo");
+    const routeLine = document.getElementById("routeLine");
+    const mapNodes = document.getElementById("mapNodes");
+    const mapCaption = document.getElementById("mapCaption");
+    const spine = document.getElementById("spine");
+    const landmarks = document.getElementById("landmarks");
+
+    const mapLayout = {
+      "main-gate": { x: 388, y: 213, labelX: 360, labelY: 198 },
+      "frank-sinatra": { x: 421, y: 287, labelX: 393, labelY: 318 },
+      "humanities": { x: 455, y: 335, labelX: 419, labelY: 359 },
+      "social-sciences": { x: 395, y: 244, labelX: 354, labelY: 229 },
+      "law": { x: 509, y: 259, labelX: 536, labelY: 286 },
+      "rothberg": { x: 558, y: 209, labelX: 565, labelY: 189 }
+    };
+
+    const mapEdgePoints = {
+      "main-gate:frank-sinatra": [
+        [388, 213],
+        [398, 227],
+        [406, 245],
+        [414, 266],
+        [421, 287]
+      ],
+      "frank-sinatra:humanities": [
+        [421, 287],
+        [430, 301],
+        [441, 315],
+        [455, 335]
+      ],
+      "frank-sinatra:social-sciences": [
+        [421, 287],
+        [413, 274],
+        [405, 260],
+        [395, 244]
+      ],
+      "frank-sinatra:law": [
+        [421, 287],
+        [444, 283],
+        [469, 277],
+        [489, 268],
+        [509, 259]
+      ],
+      "frank-sinatra:rothberg": [
+        [421, 287],
+        [447, 284],
+        [480, 271],
+        [511, 253],
+        [536, 232],
+        [558, 209]
+      ],
+      "law:rothberg": [
+        [509, 259],
+        [525, 243],
+        [541, 226],
+        [558, 209]
+      ]
+    };
+
+    function placeById(id) {
+      return places.find(place => place.id === id);
+    }
+
+    function neighbors(id) {
+      return Object.entries(edges[id] || {}).map(([nextId, detail]) => ({
+        nextId,
+        ...detail
+      }));
+    }
+
+    function shortestPath(fromId, toId) {
+      if (fromId === toId) {
+        return {
+          path: [fromId],
+          legs: [],
+          totalMinutes: 0
+        };
+      }
+
+      const queue = [{ id: fromId, path: [fromId], legs: [], totalMinutes: 0 }];
+      const seen = new Set([fromId]);
+
+      while (queue.length) {
+        const current = queue.shift();
+
+        for (const option of neighbors(current.id)) {
+          if (seen.has(option.nextId)) {
+            continue;
+          }
+
+          const nextPath = [...current.path, option.nextId];
+          const nextLegs = [...current.legs, {
+            from: current.id,
+            to: option.nextId,
+            minutes: option.minutes,
+            text: option.text
+          }];
+          const totalMinutes = current.totalMinutes + option.minutes;
+
+          if (option.nextId === toId) {
+            return {
+              path: nextPath,
+              legs: nextLegs,
+              totalMinutes
+            };
+          }
+
+          seen.add(option.nextId);
+          queue.push({
+            id: option.nextId,
+            path: nextPath,
+            legs: nextLegs,
+            totalMinutes
+          });
+        }
+      }
+
+      return null;
+    }
+
+    function formatPathNames(path) {
+      return path.map(id => placeById(id).name).join(" -> ");
+    }
+
+    function renderSelectors() {
+      const options = places.map(place => `<option value="${place.id}">${place.name}</option>`).join("");
+      fromSelect.innerHTML = options;
+      toSelect.innerHTML = options;
+      fromSelect.value = "main-gate";
+      toSelect.value = "rothberg";
+    }
+
+    function renderSpine() {
+      const order = ["main-gate", "frank-sinatra", "humanities", "social-sciences", "law", "rothberg"];
+      spine.innerHTML = order.map(id => {
+        const place = placeById(id);
+        return `
+          <div class="stop">
+            <strong>${place.name}</strong>
+            <span>${place.zone}</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderLandmarks() {
+      landmarks.innerHTML = places.map(place => `
+        <article class="landmark-card">
+          <h4>${place.name}</h4>
+          <p>${place.summary}</p>
+          <div class="tag-row">
+            <div class="tag">${place.zone}</div>
+            <div class="tag">${place.walkFromCenter} from center</div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function edgeKey(fromId, toId) {
+      return `${fromId}:${toId}`;
+    }
+
+    function edgePoints(fromId, toId) {
+      const direct = mapEdgePoints[edgeKey(fromId, toId)];
+      if (direct) {
+        return direct;
+      }
+
+      const reverse = mapEdgePoints[edgeKey(toId, fromId)];
+      if (reverse) {
+        return [...reverse].reverse();
+      }
+
+      return [
+        [mapLayout[fromId].x, mapLayout[fromId].y],
+        [mapLayout[toId].x, mapLayout[toId].y]
+      ];
+    }
+
+    function routePathToSvg(path) {
+      const points = [];
+
+      path.forEach((id, index) => {
+        const currentPoint = [mapLayout[id].x, mapLayout[id].y];
+        if (index === 0) {
+          points.push(currentPoint);
+          return;
+        }
+
+        const segment = edgePoints(path[index - 1], id);
+        segment.forEach((point, segmentIndex) => {
+          if (segmentIndex === 0) {
+            return;
+          }
+          points.push(point);
+        });
+      });
+
+      return points.map((point, index) => `${index === 0 ? "M" : "L"} ${point[0]} ${point[1]}`).join(" ");
+    }
+
+    function renderMap(path, fromId, toId) {
+      const routeSvg = routePathToSvg(path);
+      routeHalo.setAttribute("d", routeSvg);
+      routeLine.setAttribute("d", routeSvg);
+
+      mapNodes.innerHTML = places.map(place => {
+        const point = mapLayout[place.id];
+        const isOnPath = path.includes(place.id);
+        const isStart = place.id === fromId;
+        const isEnd = place.id === toId;
+
+        let fill = "#fffdfa";
+        let stroke = "rgba(41, 51, 46, 0.35)";
+        let radius = 12;
+
+        if (isOnPath) {
+          fill = "#f9edd2";
+          stroke = "#b88439";
+        }
+        if (isStart) {
+          fill = "#0f6a66";
+          stroke = "#0f6a66";
+          radius = 14;
+        }
+        if (isEnd) {
+          fill = "#b8573f";
+          stroke = "#b8573f";
+          radius = 14;
+        }
+
+        return `
+          <g>
+            <circle cx="${point.x}" cy="${point.y}" r="${radius}" fill="${fill}" stroke="${stroke}" stroke-width="4"></circle>
+            <text x="${point.labelX}" y="${point.labelY}" text-anchor="middle" font-size="12" font-weight="700" fill="#1f211d">${place.name}</text>
+          </g>
+        `;
+      }).join("");
+
+      const from = placeById(fromId);
+      const to = placeById(toId);
+      mapCaption.textContent = `${from.name} to ${to.name}, highlighted on the main campus walking spine.`;
+    }
+
+    function extraArrivalTip(destinationId) {
+      const tips = {
+        "main-gate": "Once you see the gate and outer edge of campus, you are back at the main entrance.",
+        "frank-sinatra": "Look for the library and the busy central square; that usually confirms you are in the right place.",
+        "humanities": "When you arrive, switch from campus-wide signs to the specific building or block sign for your class.",
+        "social-sciences": "Social Sciences includes several blocks, so check the block number as soon as you reach the faculty zone.",
+        "law": "At the Law Faculty, use the local signage immediately because classrooms and offices branch off from the main approach.",
+        "rothberg": "Rothberg is a common first stop for international students, so staff or nearby students can usually point you the rest of the way quickly."
+      };
+
+      return tips[destinationId];
+    }
+
+    function renderRoute(forceViaCenter = false) {
+      const fromId = fromSelect.value;
+      const toId = toSelect.value;
+      const from = placeById(fromId);
+      const to = placeById(toId);
+
+      if (fromId === toId) {
+        routeTitle.textContent = `${from.name}`;
+        routeSubtitle.textContent = "You are already at the selected destination.";
+        routeBadge.textContent = "0 min";
+        routeMeta.innerHTML = `
+          <div class="meta-chip"><strong>Start</strong><span>${from.name}</span></div>
+          <div class="meta-chip"><strong>Destination</strong><span>${to.name}</span></div>
+          <div class="meta-chip"><strong>Advice</strong><span>Check the local building sign or room number.</span></div>
+        `;
+        routeSteps.innerHTML = `
+          <div class="step">
+            <div>
+              <strong>Stay in place</strong>
+              <span>You already reached the selected landmark. The next step is following the local room, block, or office signs.</span>
+            </div>
+          </div>
+        `;
+        routeNote.textContent = extraArrivalTip(toId);
+        plannerSummary.innerHTML = `<strong>Quick read</strong><span>You are already at ${to.name}.</span>`;
+        renderMap([fromId], fromId, toId);
+        return;
+      }
+
+      let result;
+      if (forceViaCenter && fromId !== "frank-sinatra" && toId !== "frank-sinatra") {
+        const firstLeg = shortestPath(fromId, "frank-sinatra");
+        const secondLeg = shortestPath("frank-sinatra", toId);
+        if (firstLeg && secondLeg) {
+          result = {
+            path: [...firstLeg.path, ...secondLeg.path.slice(1)],
+            legs: [...firstLeg.legs, ...secondLeg.legs],
+            totalMinutes: firstLeg.totalMinutes + secondLeg.totalMinutes
+          };
+        }
+      }
+
+      if (!result) {
+        result = shortestPath(fromId, toId);
+      }
+
+      if (!result) {
+        routeTitle.textContent = "Route unavailable";
+        routeSubtitle.textContent = "This route needs a more detailed campus map.";
+        routeBadge.textContent = "Check signs";
+        routeMeta.innerHTML = "";
+        routeSteps.innerHTML = "";
+        routeNote.textContent = "Try routing yourself first to Frank Sinatra Square or the library, then continue from there.";
+        plannerSummary.innerHTML = `<strong>Quick read</strong><span>Use the library area as your fallback landmark.</span>`;
+        renderMap([fromId], fromId, toId);
+        return;
+      }
+
+      routeTitle.textContent = `${from.name} to ${to.name}`;
+      routeSubtitle.textContent = `Simple walking directions through the main Mount Scopus landmarks.`;
+      routeBadge.textContent = `~${result.totalMinutes} min walk`;
+
+      const viaCenter = result.path.includes("frank-sinatra") && fromId !== "frank-sinatra" && toId !== "frank-sinatra";
+      routeMeta.innerHTML = `
+        <div class="meta-chip">
+          <strong>Start</strong>
+          <span>${from.zone}</span>
+        </div>
+        <div class="meta-chip">
+          <strong>Destination</strong>
+          <span>${to.zone}</span>
+        </div>
+        <div class="meta-chip">
+          <strong>Route style</strong>
+          <span>${viaCenter ? "Via campus center" : "Direct main-path route"}</span>
+        </div>
+      `;
+
+      const introStep = {
+        title: "Start by checking the nearest sign",
+        text: `Before you walk, confirm you are at ${from.name}. That prevents taking the right path from the wrong building entrance.`
+      };
+
+      const legSteps = result.legs.map(leg => ({
+        title: `${placeById(leg.from).name} -> ${placeById(leg.to).name}`,
+        text: leg.text
+      }));
+
+      const finalStep = {
+        title: "Confirm the exact building block",
+        text: extraArrivalTip(toId)
+      };
+
+      const allSteps = [introStep, ...legSteps, finalStep];
+      routeSteps.innerHTML = allSteps.map(step => `
+        <div class="step">
+          <div>
+            <strong>${step.title}</strong>
+            <span>${step.text}</span>
+          </div>
+        </div>
+      `).join("");
+
+      routeNote.textContent = `Route outline: ${formatPathNames(result.path)}. If one branch looks quiet or confusing, stay with the busier signed pedestrian route.`;
+      plannerSummary.innerHTML = `
+        <strong>Quick read</strong>
+        <span>From ${from.name} to ${to.name}: about ${result.totalMinutes} minutes on foot. ${viaCenter ? "This route uses the central library area as the easiest waypoint." : "You can stay on the main signed route most of the way."}</span>
+      `;
+      renderMap(result.path, fromId, toId);
+    }
+
+    renderSelectors();
+    renderSpine();
+    renderLandmarks();
+    renderRoute();
+
+    fromSelect.addEventListener("change", () => renderRoute());
+    toSelect.addEventListener("change", () => renderRoute());
+
+    swapButton.addEventListener("click", () => {
+      const currentFrom = fromSelect.value;
+      fromSelect.value = toSelect.value;
+      toSelect.value = currentFrom;
+      renderRoute();
+    });
+
+    centralButton.addEventListener("click", () => renderRoute(true));
+  </script>
+</body>
+</html>
