@@ -1,49 +1,64 @@
 # Project Plan
 
 ## Project Goal
-Build a polished indoor campus navigation assistant for students, starting with a focused MVP that simulates navigation inside a university building using predefined routes and mock positioning.
+Build a polished wayfinding assistant for the Hebrew University Mount Scopus Social Sciences building that helps users reach specific rooms using landmark-based starts, verbal directions, and optional video walkthroughs.
+
+## What This Project Is
+- A campus wayfinding product for one building
+- A student-facing guided navigation experience
+- An MVP built around static route content and clear presentation
+
+## What This Project Is Not
+- Not GPS-based navigation
+- Not live indoor positioning
+- Not a complex map-routing engine
+- Not a full campus-wide navigation platform yet
 
 ## MVP Scope
-- Select a building or area
-- Search for a destination
-- Show a simulated current location
-- Display a route on a map or floor image
-- Present step-by-step walking directions
+- Allow the user to choose a starting landmark
+- Allow the user to enter or select a destination room number
+- Show step-by-step verbal directions
 - Show estimated walking time
-- Support a responsive mobile-friendly UI
+- Show floor information
+- Show an optional short video walkthrough when available
+- Show a simple visual reference such as a blueprint crop or image when available
 
-## Initial Tech Stack
-- React
-- Vite
-- Tailwind CSS
-- Static image or SVG map assets
-- GitHub for version control
-- Vercel for deployment
+## Starting Landmarks For MVP
+- Main entrance
+- Lobby
+- Elevators
+- Stairs
+- Library entrance
+- Cafeteria area
 
-## Pre-Development Priorities
-- Keep existing prototypes as visual and UX references
-- Set up the React + Vite app structure
-- Configure Tailwind and design tokens
-- Decide whether to start with JavaScript or TypeScript
-- Define the first realistic building/destination demo flow
+## Data Strategy
+The first version should use static or mock route data.
 
-## Suggested Application Structure
-- `src/`
-- `src/components/`
-- `src/pages/` or `src/routes/`
-- `src/assets/`
-- `public/`
+Each route entry will likely need:
+- starting landmark
+- destination room number
+- floor number
+- verbal directions
+- estimated walking time
+- optional video asset
+- optional reference image or blueprint section
 
-## First Development Milestones
-1. Scaffold the application with Vite.
-2. Configure Tailwind CSS and base styling.
-3. Build the initial landing and map-view layout.
-4. Convert prototype ideas into reusable React components.
-5. Load one building map and mock route data.
-6. Add destination selection and route instruction display.
+## Product Priorities
+- Clarity over complexity
+- Fast access to directions
+- A calm, polished mobile-friendly interface
+- Easy maintenance of route content
+- A structure that can grow without adding premature technical complexity
+
+## Recommended Next Development Step
+1. Finalize the content model for routes, landmarks, rooms, and media.
+2. Decide on the first set of rooms to support in the MVP.
+3. Scaffold the React + Vite + Tailwind frontend.
+4. Build the main flow around landmark selection and room lookup.
+5. Add static route cards with verbal directions and optional media.
 
 ## Open Questions
-- Will the first version target one building only or multiple buildings?
-- Should maps be image-based, SVG-based, or mixed?
-- Should route data live in static JSON at first?
-- Is the first release intended more as a demo or as a product prototype?
+- Which exact room numbers should be included in the first MVP?
+- Will room input be free text, dropdown-based, or both?
+- How many video walkthroughs are realistically available for version one?
+- What visual reference assets already exist and in what format?

@@ -1,49 +1,42 @@
 # AI Prompts
 
-This file stores useful prompt templates for AI-assisted planning, design, and implementation during development.
+This file stores useful prompt templates for planning, structuring, and implementing the Mount Scopus Social Sciences wayfinding MVP.
 
-## UI Conversion Prompt
-Use when turning a static HTML prototype into reusable React components.
-
+## Route Data Design Prompt
 ```text
-Convert this prototype into a React component structure for a Vite application.
-Preserve the visual direction and layout intent, but refactor repeated UI into reusable components.
-Use clean, readable component boundaries and keep the code easy to extend.
-If styling is needed, prefer Tailwind utility classes unless a shared style belongs in a global stylesheet.
+Design a simple static data model for a campus wayfinding MVP.
+The app is for the Hebrew University Mount Scopus Social Sciences building.
+Each route should connect a starting landmark to a destination room number.
+Include fields for verbal directions, estimated walking time, floor information, optional video walkthrough, and optional reference image.
+Keep the structure easy to edit manually and easy to consume in a React frontend.
 ```
 
-## Tailwind Setup Prompt
-Use when preparing the first production-ready styling pass.
-
+## Room Coverage Planning Prompt
 ```text
-Set up Tailwind CSS for this project and create a clean design foundation.
-Define a small set of reusable colors, spacing rules, and typography choices based on the existing prototypes.
-Avoid generic defaults and keep the result cohesive with the product theme.
+Help define the first MVP room coverage for the Social Sciences building.
+Recommend a practical first set of room numbers and starting landmarks that provides useful coverage without overbuilding.
+Optimize for clarity, repeatability, and ease of content collection.
 ```
 
-## Component Planning Prompt
-Use before implementing a new screen or feature.
-
+## UX Flow Prompt
 ```text
-Analyze this feature and propose the React component structure first.
-List the main UI sections, reusable components, expected props, and any static data needed for the first pass.
-Keep the proposal practical and aligned with a Vite + React + Tailwind codebase.
+Design the ideal MVP user flow for a student-facing building wayfinding app.
+The user should choose a starting landmark, enter or select a destination room number, and then receive clear verbal directions with optional media.
+Do not include GPS, live positioning, or advanced route generation.
+Focus on simplicity, trust, and mobile usability.
 ```
 
-## UX Review Prompt
-Use when reviewing a prototype or implemented page.
-
+## React Build Prompt
 ```text
-Review this interface for clarity, usability, hierarchy, and mobile responsiveness.
-Identify the biggest issues first, then recommend improvements that preserve the existing product direction.
-Focus on real UX problems instead of cosmetic nitpicks.
+Plan a React + Vite + Tailwind frontend for a building wayfinding assistant.
+The MVP should use static route data and present landmark selection, room lookup, verbal directions, walking time, floor information, and optional video/reference media.
+Avoid backend complexity and do not introduce GPS or live location logic.
+Recommend a clean component structure before implementation.
 ```
 
-## Data Modeling Prompt
-Use when defining map, route, or destination data.
-
+## Content QA Prompt
 ```text
-Design a simple frontend-friendly data shape for buildings, destinations, and routes.
-Optimize for readability and ease of iteration in an MVP.
-Include a small example payload and explain why the structure fits the current product scope.
+Review these route instructions for clarity and consistency.
+Check whether the verbal directions are easy for a student or visitor to follow in a real building.
+Flag ambiguous turns, missing landmark references, and wording that could confuse first-time visitors.
 ```

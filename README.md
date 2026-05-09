@@ -1,47 +1,53 @@
 # Maze
-# Indoor Campus Navigation Assistant
+# Hebrew University Mount Scopus Wayfinding Assistant
 
 ## Project Overview
-This project is a vibe-coding course project focused on building an assisted indoor campus navigation system for students.
+Maze is a student-facing campus wayfinding assistant for the Hebrew University Mount Scopus Social Sciences building.
 
-The application will simulate indoor navigation inside a university building using predefined routes and mock positioning.
+This project is not focused on GPS, live positioning, or algorithm-heavy indoor navigation. The MVP is designed to help students and visitors reach specific room numbers using clear verbal instructions, landmark-based starting points, short video walkthroughs, and simple visual references where available.
 
-The goal is to create a polished, modern, and user-friendly experience while demonstrating rapid AI-assisted development workflows.
+## MVP Goal
+Help a user get from a known starting landmark inside the building to a target room number as clearly and confidently as possible.
 
-## MVP Features
-- Building selection
-- Destination search
-- Simulated current location
-- Indoor route visualization
-- Step-by-step directions
-- Estimated walking time
-- Responsive modern UI
+## Core User Flow
+1. User selects a starting landmark, such as:
+   - Main entrance
+   - Lobby
+   - Elevators
+   - Stairs
+   - Library entrance
+   - Cafeteria area
+2. User enters or selects a destination room number.
+3. The app displays:
+   - Step-by-step verbal directions
+   - Estimated walking time
+   - Floor information
+   - Optional short video walkthrough
+   - Optional reference image or blueprint section
+
+## MVP Constraints
+- No GPS
+- No live indoor positioning
+- No heavy map or routing algorithms yet
+- Use static or mock route data for the MVP
+- Focus on a polished, simple student experience
 
 ## Planned Tech Stack
 - React
 - Vite
 - Tailwind CSS
-- SVG/Image-based indoor maps
+- Static mock route data
+- Optional video/reference assets
 - GitHub
 - Vercel
 
 ## Future Ideas
-- Conversational AI assistant
-- Accessibility routes
-- Multi-floor support
-- Live positioning
-- Voice navigation
-- QR code positioning
-
-## Team Workflow
-We are using GitHub as the central collaboration platform.
-
-AI tools such as Codex, ChatGPT, and Claude will assist with:
-- UI generation
-- debugging
-- documentation
-- rapid prototyping
-- component development
+- More room coverage across the building
+- Better media organization for route walkthroughs
+- Search improvements and route filtering
+- Accessibility-aware route variations
+- Expansion to additional buildings after the MVP is stable
 
 ## Current Status
-Initial repository setup.
+Repository cleaned and documentation aligned to the new MVP direction.
+Frontend scaffolding has not been created yet.
