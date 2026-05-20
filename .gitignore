@@ -6,3 +6,4 @@ dist/
 .env.*
 !.env.example
 media/teva-route.mp4
+media/teva-route-web.mp4
