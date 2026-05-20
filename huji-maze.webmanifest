@@ -1,0 +1,31 @@
+{
+  "name": "HUJI Maze",
+  "short_name": "Maze",
+  "description": "Indoor navigation guidance for HUJI campus routes.",
+  "start_url": "./huji-maze.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020712",
+  "theme_color": "#020712",
+  "icons": [
+    {
+      "src": "./maze-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./maze-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./maze-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

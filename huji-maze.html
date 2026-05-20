@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#020712" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="HUJI Maze" />
+    <link rel="manifest" href="./huji-maze.webmanifest" />
+    <link rel="icon" href="./maze-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <title>HUJI Maze</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #020712;
+        --panel: rgba(5, 14, 28, 0.78);
+        --panel-strong: rgba(7, 17, 34, 0.94);
+        --line: rgba(76, 154, 255, 0.26);
+        --blue: #188cff;
+        --blue-soft: #79bbff;
+        --text: #f3f8ff;
+        --muted: #8ea4bf;
+        --shadow: 0 32px 90px rgba(0, 0, 0, 0.58);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        overflow-x: hidden;
+        font-family: "Avenir Next", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      .app {
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 78% 35%, rgba(18, 108, 255, 0.2), transparent 28%),
+          radial-gradient(circle at 15% 80%, rgba(15, 84, 184, 0.16), transparent 30%),
+          linear-gradient(135deg, #020712 0%, #04101f 45%, #02050d 100%);
+      }
+
+      .app::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(68, 148, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(68, 148, 255, 0.08) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: linear-gradient(90deg, transparent, #000 16%, #000 84%, transparent);
+        opacity: 0.45;
+      }
+
+      .app::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 50% 35%, transparent 0 32%, rgba(0, 0, 0, 0.5) 72%);
+      }
+
+      .topbar {
+        position: fixed;
+        z-index: 20;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 66px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: max(14px, env(safe-area-inset-top)) 28px 12px;
+        border-bottom: 1px solid rgba(104, 164, 255, 0.1);
+        background: rgba(1, 6, 14, 0.58);
+        backdrop-filter: blur(18px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+        font-size: 0.95rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .brand-mark {
+        width: 24px;
+        height: 24px;
+        border: 1px solid rgba(93, 181, 255, 0.75);
+        clip-path: polygon(50% 0, 100% 22%, 82% 100%, 50% 70%, 18% 100%, 0 22%);
+        box-shadow: 0 0 20px rgba(37, 145, 255, 0.8);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 34px;
+        font-size: 0.64rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8fa9c8;
+      }
+
+      .nav span:first-child {
+        color: var(--blue-soft);
+      }
+
+      .launch-pill {
+        border: 1px solid rgba(45, 143, 255, 0.75);
+        border-radius: 16px;
+        padding: 12px 18px;
+        color: white;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        box-shadow: inset 0 0 22px rgba(21, 117, 255, 0.12), 0 0 24px rgba(25, 126, 255, 0.18);
+      }
+
+      .stage {
+        display: none;
+        position: relative;
+        z-index: 2;
+        min-height: 100vh;
+        padding: 104px 28px 32px;
+      }
+
+      .stage.active {
+        display: block;
+        animation: stageIn 650ms ease both;
+      }
+
+      @keyframes stageIn {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .hero-grid,
+      .guide-grid {
+        width: min(1180px, 100%);
+        min-height: calc(100vh - 136px);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+        align-items: center;
+        gap: 42px;
+      }
+
+      .hero-copy {
+        position: relative;
+      }
+
+      .kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+        color: #9cc8ff;
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+
+      .kicker::before {
+        content: "";
+        width: 26px;
+        height: 2px;
+        background: var(--blue);
+        box-shadow: 0 0 16px var(--blue);
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(4.6rem, 14vw, 9.5rem);
+        line-height: 0.86;
+        letter-spacing: 0.06em;
+        font-weight: 500;
+        text-shadow: 0 0 18px rgba(138, 195, 255, 0.46), 0 0 48px rgba(22, 126, 255, 0.26);
+      }
+
+      h2 {
+        font-size: clamp(2.2rem, 7vw, 5rem);
+        line-height: 0.94;
+        letter-spacing: 0.02em;
+        font-weight: 500;
+        text-shadow: 0 0 18px rgba(138, 195, 255, 0.3);
+      }
+
+      .subtitle {
+        margin-top: 26px;
+        color: #d7e7fb;
+        font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+        font-weight: 400;
+      }
+
+      .microcopy {
+        max-width: 360px;
+        margin-top: 26px;
+        color: var(--muted);
+        font-size: 0.98rem;
+        line-height: 1.7;
+      }
+
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 42px;
+      }
+
+      .primary-button,
+      .ghost-button {
+        min-height: 54px;
+        border-radius: 18px;
+        padding: 0 24px;
+        cursor: pointer;
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 900;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+
+      .primary-button {
+        border: 1px solid rgba(99, 178, 255, 0.9);
+        background: linear-gradient(135deg, #0965ff, #0c8dff);
+        box-shadow: 0 0 18px rgba(43, 136, 255, 0.7), 0 20px 50px rgba(4, 72, 191, 0.48);
+      }
+
+      .ghost-button {
+        border: 1px solid rgba(140, 178, 224, 0.28);
+        background: rgba(3, 10, 20, 0.44);
+      }
+
+      .back-button {
+        width: fit-content;
+        border: 1px solid rgba(140, 178, 224, 0.24);
+        border-radius: 999px;
+        background: rgba(3, 10, 20, 0.42);
+        color: #b9d7f7;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-size: 0.7rem;
+        font-weight: 900;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .back-button:hover {
+        border-color: rgba(98, 181, 255, 0.66);
+        color: white;
+        box-shadow: 0 0 22px rgba(24, 140, 255, 0.18);
+      }
+
+      .blueprint {
+        position: relative;
+        min-height: 520px;
+        border-radius: 34px;
+        transform: perspective(900px) rotateX(58deg) rotateZ(-16deg);
+        transform-origin: center;
+        background:
+          linear-gradient(90deg, rgba(68, 148, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(rgba(68, 148, 255, 0.08) 1px, transparent 1px),
+          radial-gradient(circle at 48% 45%, rgba(24, 140, 255, 0.18), transparent 34%),
+          rgba(6, 18, 35, 0.26);
+        background-size: 42px 42px, 42px 42px, auto, auto;
+        border: 1px solid rgba(71, 149, 255, 0.14);
+        box-shadow: 0 0 80px rgba(15, 97, 255, 0.2);
+      }
+
+      .room {
+        position: absolute;
+        border: 1px solid rgba(95, 166, 255, 0.24);
+        background: rgba(9, 29, 55, 0.3);
+        box-shadow: inset 0 0 24px rgba(63, 148, 255, 0.08);
+      }
+
+      .room-a { left: 7%; top: 22%; width: 28%; height: 24%; }
+      .room-b { right: 6%; top: 14%; width: 36%; height: 26%; }
+      .room-c { left: 18%; bottom: 13%; width: 34%; height: 30%; }
+      .room-d { right: 12%; bottom: 18%; width: 26%; height: 24%; }
+
+      .route-line {
+        position: absolute;
+        left: 13%;
+        top: 57%;
+        width: 72%;
+        height: 9px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, #1092ff, #62bdff, #1092ff);
+        filter: drop-shadow(0 0 14px #168fff);
+        transform: rotate(-13deg);
+        animation: pulseLine 2.2s ease-in-out infinite;
+      }
+
+      .route-line::before,
+      .route-line::after {
+        content: "";
+        position: absolute;
+        width: 17px;
+        height: 17px;
+        top: 50%;
+        border-radius: 999px;
+        background: white;
+        box-shadow: 0 0 12px white, 0 0 34px #168fff;
+        transform: translateY(-50%);
+      }
+
+      .route-line::before { left: 0; }
+      .route-line::after { right: 0; }
+
+      @keyframes pulseLine {
+        0%, 100% { opacity: 0.72; }
+        50% { opacity: 1; filter: drop-shadow(0 0 24px #36a5ff); }
+      }
+
+      .node {
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(126, 190, 255, 0.56);
+        border-radius: 999px;
+        color: #c9e3ff;
+        background: rgba(3, 12, 24, 0.74);
+        box-shadow: 0 0 22px rgba(33, 146, 255, 0.38);
+        transform: rotate(16deg) rotateX(-58deg);
+        font-size: 1rem;
+      }
+
+      .node-1 { left: 18%; top: 48%; }
+      .node-2 { left: 48%; top: 32%; }
+      .node-3 { right: 16%; top: 52%; }
+
+      .hud-card {
+        position: absolute;
+        right: 0;
+        bottom: 8%;
+        min-width: 230px;
+        padding: 18px;
+        border: 1px solid rgba(113, 174, 255, 0.18);
+        border-radius: 22px;
+        background: rgba(5, 14, 28, 0.78);
+        backdrop-filter: blur(20px);
+        box-shadow: var(--shadow);
+        transform: none;
+      }
+
+      .hud-card small {
+        color: var(--muted);
+        display: block;
+        font-size: 0.72rem;
+      }
+
+      .hud-card strong {
+        display: block;
+        margin-top: 5px;
+        color: var(--blue-soft);
+      }
+
+      .planner-card,
+      .instruction-card,
+      .video-shell {
+        border: 1px solid rgba(106, 170, 255, 0.18);
+        border-radius: 28px;
+        background: var(--panel);
+        backdrop-filter: blur(24px);
+        box-shadow: var(--shadow);
+      }
+
+      .planner-card {
+        width: min(460px, 100%);
+        justify-self: end;
+        padding: 24px;
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      label {
+        display: grid;
+        gap: 9px;
+      }
+
+      .label-title,
+      .section-kicker {
+        color: #91b0d0;
+        font-size: 0.7rem;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      select {
+        width: 100%;
+        min-height: 56px;
+        border: 1px solid rgba(102, 169, 255, 0.24);
+        border-radius: 16px;
+        padding: 0 16px;
+        outline: none;
+        background: rgba(1, 8, 18, 0.84);
+        color: var(--text);
+      }
+
+      select:focus {
+        border-color: rgba(98, 181, 255, 0.75);
+        box-shadow: 0 0 0 4px rgba(24, 140, 255, 0.14);
+      }
+
+      .guide-grid {
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        align-items: start;
+        padding-top: 24px;
+      }
+
+      .route-summary {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .summary-tile {
+        border: 1px solid rgba(106, 170, 255, 0.14);
+        border-radius: 18px;
+        padding: 14px;
+        background: rgba(5, 14, 28, 0.68);
+      }
+
+      .summary-tile span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.72rem;
+      }
+
+      .summary-tile strong {
+        display: block;
+        margin-top: 6px;
+        color: white;
+      }
+
+      .video-shell {
+        overflow: hidden;
+      }
+
+      video {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: #030814;
+      }
+
+      .instruction-card {
+        margin-top: 18px;
+        padding: 22px;
+      }
+
+      .instruction-steps {
+        margin: 16px 0 0;
+        padding-left: 22px;
+        display: grid;
+        gap: 12px;
+        color: #d9e8fb;
+      }
+
+      .instruction-steps li {
+        line-height: 1.65;
+      }
+
+      @media (max-width: 860px) {
+        .topbar {
+          height: 62px;
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+
+        .nav {
+          display: none;
+        }
+
+        .launch-pill {
+          padding: 10px 13px;
+          border-radius: 14px;
+          font-size: 0.58rem;
+        }
+
+        .stage {
+          padding: 86px 18px 24px;
+        }
+
+        .hero-grid,
+        .guide-grid {
+          min-height: calc(100vh - 110px);
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+
+        .hero-grid {
+          align-content: center;
+        }
+
+        .blueprint {
+          min-height: 330px;
+          transform: perspective(800px) rotateX(54deg) rotateZ(-17deg) scale(0.92);
+        }
+
+        .planner-card {
+          justify-self: stretch;
+        }
+
+        .route-summary {
+          grid-template-columns: 1fr;
+        }
+
+        .hud-card {
+          right: 8px;
+          bottom: -4px;
+          min-width: 190px;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .brand {
+          font-size: 0.82rem;
+        }
+
+        h1 {
+          font-size: clamp(4.2rem, 24vw, 7rem);
+        }
+
+        h2 {
+          font-size: clamp(2.1rem, 13vw, 3.7rem);
+        }
+
+        .subtitle {
+          margin-top: 18px;
+          font-size: 1.08rem;
+        }
+
+        .microcopy {
+          margin-top: 18px;
+          font-size: 0.9rem;
+        }
+
+        .action-row {
+          margin-top: 30px;
+        }
+
+        .primary-button,
+        .ghost-button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Maze</span>
+        </div>
+        <nav class="nav" aria-label="Main navigation">
+          <span>Home</span>
+          <span>Route</span>
+          <span>Video</span>
+          <span>Steps</span>
+        </nav>
+        <div class="launch-pill">No GPS</div>
+      </header>
+
+      <section id="welcome-stage" class="stage active">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="kicker">Find your path inside</div>
+            <h1>MAZE</h1>
+            <p class="subtitle">Indoor navigation for complex spaces.</p>
+            <p class="microcopy">Campus Entrance 1 to Teva. Video guidance. Clear steps. Zero GPS.</p>
+            <div class="action-row">
+              <button id="start-navigation-button" class="primary-button" type="button">Start Navigation</button>
+            </div>
+          </div>
+
+          <div class="blueprint" aria-hidden="true">
+            <div class="room room-a"></div>
+            <div class="room room-b"></div>
+            <div class="room room-c"></div>
+            <div class="room room-d"></div>
+            <div class="route-line"></div>
+            <div class="node node-1">IN</div>
+            <div class="node node-2">UP</div>
+            <div class="node node-3">GO</div>
+            <div class="hud-card">
+              <small>Route</small>
+              <strong>Entrance 1 to Teva</strong>
+              <small style="margin-top:14px;">Mode</small>
+              <strong>Video + Steps</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="planner-stage" class="stage">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="kicker">Route system</div>
+            <h2>Choose Route</h2>
+            <p class="subtitle">Start and destination.</p>
+          </div>
+
+          <form id="planner-form" class="planner-card field-grid">
+            <button id="planner-back-button" class="back-button" type="button">Back</button>
+            <label>
+              <span class="label-title">Start</span>
+              <select id="start-select">
+                <option value="Campus Entrance 1">Campus Entrance 1</option>
+              </select>
+            </label>
+
+            <label>
+              <span class="label-title">Destination</span>
+              <select id="destination-select">
+                <option value="Teva">Teva</option>
+              </select>
+            </label>
+
+            <button class="primary-button" type="submit">Go</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="guide-stage" class="stage">
+        <div class="guide-grid">
+          <div class="hero-copy">
+            <button id="guide-back-button" class="back-button" type="button">Back</button>
+            <div class="kicker">Active route</div>
+            <h2>Directions</h2>
+
+            <div class="route-summary">
+              <div class="summary-tile">
+                <span>From</span>
+                <strong id="summary-start">Campus Entrance 1</strong>
+              </div>
+              <div class="summary-tile">
+                <span>To</span>
+                <strong id="summary-destination">Teva</strong>
+              </div>
+            </div>
+
+            <div class="instruction-card">
+              <div class="section-kicker">Steps</div>
+              <ol id="verbal-instruction" class="instruction-steps">
+                <li>Exit the security booth at Entrance 1 and immediately go up the first flight of stairs.</li>
+                <li>Continue straight for about 250 meters until you reach another staircase on the left, with a path descending toward the main road on the right. Take the staircase going up.</li>
+                <li>Continue for another 250 meters until you reach a bridge and cross it. After crossing the bridge, veer left into the plaza area.</li>
+                <li>At the entrance to the plaza, turn left and walk alongside the building until you reach a staircase going down.</li>
+                <li>Go down the staircase and continue along the path, passing the International School on your left.</li>
+                <li>At the next intersection, veer right and stay on the path until you reach the building.</li>
+              </ol>
+            </div>
+          </div>
+
+          <div class="video-shell">
+            <video id="route-video" controls playsinline preload="metadata">
+              <source src="./media/teva-route-web.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const welcomeStage = document.getElementById('welcome-stage');
+      const plannerStage = document.getElementById('planner-stage');
+      const guideStage = document.getElementById('guide-stage');
+      const plannerForm = document.getElementById('planner-form');
+      const startSelect = document.getElementById('start-select');
+      const destinationSelect = document.getElementById('destination-select');
+      const summaryStart = document.getElementById('summary-start');
+      const summaryDestination = document.getElementById('summary-destination');
+      const startNavigationButton = document.getElementById('start-navigation-button');
+      const plannerBackButton = document.getElementById('planner-back-button');
+      const guideBackButton = document.getElementById('guide-back-button');
+
+      function showStage(stageToShow) {
+        [welcomeStage, plannerStage, guideStage].forEach((stage) => {
+          stage.classList.remove('active');
+        });
+        stageToShow.classList.add('active');
+      }
+
+      startNavigationButton.addEventListener('click', () => showStage(plannerStage));
+      plannerBackButton.addEventListener('click', () => showStage(welcomeStage));
+      guideBackButton.addEventListener('click', () => showStage(plannerStage));
+
+      plannerForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        summaryStart.textContent = startSelect.value;
+        summaryDestination.textContent = destinationSelect.value;
+        showStage(guideStage);
+      });
+
+      if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./maze-sw.js');
+        });
+      }
+    </script>
+  </body>
+</html>
