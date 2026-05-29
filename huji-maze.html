@@ -526,24 +526,17 @@
               <form id="route-form" class="route-form">
                 <label>
                   Start
-                  <select id="start-select">
-                    <option value="F6_ELEVATOR_LOBBY">Floor 6 elevator lobby</option>
-                    <option value="F6_STAIRS">Floor 6 stairs</option>
-                    <option value="F5_ELEVATOR_LOBBY">Floor 5 elevator lobby</option>
-                    <option value="F5_STAIRS">Floor 5 stairs</option>
-                    <option value="F4_ELEVATOR_LOBBY">Floor 4 elevator lobby</option>
-                    <option value="F4_STAIRS">Floor 4 stairs</option>
-                  </select>
+                  <input id="start-input" list="location-list" value="F6_ELEVATOR_LOBBY" required />
                 </label>
 
                 <label>
                   Destination
-                  <input id="destination-input" list="room-list" placeholder="618" required />
-                  <datalist id="room-list"></datalist>
+                  <input id="destination-input" list="location-list" placeholder="618" required />
+                  <datalist id="location-list"></datalist>
                 </label>
 
                 <button class="primary" type="submit">Get directions</button>
-                <p id="route-error" class="error">Room not found in Building 21.</p>
+                <p id="route-error" class="error">Location not found in Building 21.</p>
               </form>
             </div>
           </div>
@@ -594,9 +587,9 @@
       const loginTab = document.getElementById('login-tab');
       const signupTab = document.getElementById('signup-tab');
       const routeForm = document.getElementById('route-form');
-      const startSelect = document.getElementById('start-select');
+      const startInput = document.getElementById('start-input');
       const destinationInput = document.getElementById('destination-input');
-      const roomList = document.getElementById('room-list');
+      const locationList = document.getElementById('location-list');
       const summaryStart = document.getElementById('summary-start');
       const summaryDestination = document.getElementById('summary-destination');
       const routeEstimate = document.getElementById('route-estimate');
@@ -609,160 +602,143 @@
 
       let authMode = 'login';
 
-      const FLOOR_DATA = {
-        6: {
-          label: 'Floor 6',
-          rooms: ['623', '622', '621', '620', '619', '618', '617', '616', '615', '614', '613', '612', '611', '610', '609', '608', '607', '606', '605', '604', '603', '602', '601'],
-          entranceLeft: ['623'],
-          entranceRight: ['601', '602', '603', '604', '605', '606', '607', '608', '609', '610', '611', '612', '613', '614', '615', '616', '617', '618', '619', '620', '621', '622']
-        },
-        5: {
-          label: 'Floor 5',
-          rooms: ['534', '533', '532', '531', '530', '529', '528', '527', '526', '525', '524', '523', '522', '521', '520', '519', '518', '517', '516', '515', '514', '513', '512', '511', '510', '509', '508', '507', '506', '505', '504', '503', '502']
-        },
-        4: {
-          label: 'Floor 4',
-          rooms: ['21434', '21433', '21432', '21431', '21430', '21429', '21428', '21427', '21426', '21425', '21424', '21423', '21422', '21421', '21420', '21419', '21418', '21417', '21416', '21415', '21414', '21413', '21412', '21411', '21410', '21409', '21408', '21407', '21406', '21405', '21404', '21403', '21402']
-        }
-      };
+      const buildingGraph = {};
 
-      function getFloorFromStart(startId) {
-        const match = startId.match(/^F(\d)_/);
-        return match ? Number(match[1]) : null;
+      const floor6Rooms = ['623', '622', '621', '620', '619', '618', '617', '616', '615', '614', '613', '612', '611', '610', '609', '608', '607', '606', '605', '604', '603', '602', '601'];
+      const floor5Rooms = ['534', '533', '532', '531', '530', '529', '528', '527', '526', '525', '524', '523', '522', '521', '520', '519', '518', '517', '516', '515', '514', '513', '512', '511', '510', '509', '508', '507', '506', '505', '504', '503', '502'];
+      const floor4Rooms = ['21434', '21433', '21432', '21431', '21430', '21429', '21428', '21427', '21426', '21425', '21424', '21423', '21422', '21421', '21420', '21419', '21418', '21417', '21416', '21415', '21414', '21413', '21412', '21411', '21410', '21409', '21408', '21407', '21406', '21405', '21404', '21403', '21402'];
+
+      function addEdge(graph, from, to) {
+        if (!graph[from]) graph[from] = [];
+        if (!graph[to]) graph[to] = [];
+        if (!graph[from].includes(to)) graph[from].push(to);
+        if (!graph[to].includes(from)) graph[to].push(from);
       }
 
-      function getFloorFromRoom(room) {
-        if (FLOOR_DATA[6].rooms.includes(room)) return 6;
-        if (FLOOR_DATA[5].rooms.includes(room)) return 5;
-        if (FLOOR_DATA[4].rooms.includes(room)) return 4;
+      function addCircularFloor(graph, floorPrefix, roomOrder) {
+        const stairs = `${floorPrefix}_STAIRS`;
+        const elevator = `${floorPrefix}_ELEVATOR_LOBBY`;
+        const entry = `${floorPrefix}_B21_ENTRY`;
+        const mainCorridor = `${floorPrefix}_MAIN_CORRIDOR`;
+        const ringEntry = `${floorPrefix}_RING_ENTRY`;
+
+        addEdge(graph, stairs, elevator);
+        addEdge(graph, elevator, entry);
+        addEdge(graph, entry, mainCorridor);
+        addEdge(graph, mainCorridor, ringEntry);
+        addEdge(graph, ringEntry, roomOrder[0]);
+        addEdge(graph, ringEntry, roomOrder[roomOrder.length - 1]);
+
+        for (let i = 0; i < roomOrder.length; i += 1) {
+          const current = roomOrder[i];
+          const next = roomOrder[(i + 1) % roomOrder.length];
+          addEdge(graph, current, next);
+        }
+      }
+
+      function bfsShortestPath(graph, start, destination) {
+        const queue = [[start]];
+        const visited = new Set([start]);
+
+        while (queue.length > 0) {
+          const path = queue.shift();
+          const node = path[path.length - 1];
+
+          if (node === destination) return path;
+
+          for (const neighbor of graph[node] || []) {
+            if (!visited.has(neighbor)) {
+              visited.add(neighbor);
+              queue.push([...path, neighbor]);
+            }
+          }
+        }
+
         return null;
       }
 
-      function getStartLabel(startId) {
-        const floor = getFloorFromStart(startId);
-        const vertical = startId.includes('STAIRS') ? 'stairs' : 'elevator lobby';
-        return `Floor ${floor} ${vertical}`;
+      function getFloorFromNode(node) {
+        if (node.startsWith('F4_') || node.startsWith('214')) return '4';
+        if (node.startsWith('F5_') || /^5\d\d$/.test(node)) return '5';
+        if (node.startsWith('F6_') || /^6\d\d$/.test(node)) return '6';
+        return null;
       }
 
-      function getVerticalNode(startId, floor) {
-        return startId.includes('STAIRS') ? `F${floor}_STAIRS` : `F${floor}_ELEVATOR_LOBBY`;
+      function isRoom(node) {
+        return /^5\d\d$/.test(node) || /^6\d\d$/.test(node) || /^214\d\d$/.test(node);
       }
 
-      function getStartInstruction(startId, floor) {
-        if (startId.includes('STAIRS')) return `Exit the stairs on Floor ${floor}.`;
-        return `Exit the elevator on Floor ${floor}.`;
+      function formatLocation(node) {
+        if (isRoom(node)) return `Room ${node}`;
+        const floor = getFloorFromNode(node);
+        if (node.includes('ELEVATOR')) return `Floor ${floor} elevator lobby`;
+        if (node.includes('STAIRS')) return `Floor ${floor} stairs`;
+        return node;
       }
 
-      function getCorridorChoice(floor, destination) {
-        const floorData = FLOOR_DATA[floor];
-
-        if (floor === 6) {
-          const leftPath = floorData.entranceLeft;
-          const rightPath = floorData.entranceRight;
-          const direction = leftPath.includes(destination) ? 'left' : 'right';
-          const path = direction === 'left' ? leftPath : rightPath;
-          const destinationIndex = path.indexOf(destination);
+      function generateDirections(path, destination) {
+        if (!path) {
           return {
-            direction,
-            path,
-            passRooms: path.slice(0, destinationIndex),
-            roomPath: path.slice(0, destinationIndex + 1),
-            entryNeighbor: path[0],
-            stepCount: destinationIndex + 1
+            routeNodes: [],
+            directions: ['No route found.'],
+            confirmation: `Could not find a route to ${destination}.`
           };
         }
 
-        const leftPath = floorData.rooms;
-        const rightPath = [...floorData.rooms].reverse();
-        const leftIndex = leftPath.indexOf(destination);
-        const rightIndex = rightPath.indexOf(destination);
-        const useLeft = leftIndex <= rightIndex;
-        const path = useLeft ? leftPath : rightPath;
-        const destinationIndex = useLeft ? leftIndex : rightIndex;
-
-        return {
-          direction: useLeft ? 'left' : 'right',
-          path,
-          passRooms: path.slice(0, destinationIndex),
-          roomPath: path.slice(0, destinationIndex + 1),
-          entryNeighbor: path[0],
-          stepCount: destinationIndex + 1
-        };
-      }
-
-      function formatRoomList(rooms) {
-        if (rooms.length === 0) return '';
-        if (rooms.length === 1) return `Room ${rooms[0]}`;
-        const allButLast = rooms.slice(0, -1).map((room) => `Room ${room}`).join(', ');
-        return `${allButLast}, and Room ${rooms[rooms.length - 1]}`;
-      }
-
-      function buildRoute(startId, destinationRaw) {
-        const destination = destinationRaw.trim();
-        const destinationFloor = getFloorFromRoom(destination);
-
-        if (!destinationFloor) return null;
-
-        const startFloor = getFloorFromStart(startId);
-        const verticalType = startId.includes('STAIRS') ? 'stairs' : 'elevator';
-        const startNode = startId;
-        const arrivalNode = getVerticalNode(startId, destinationFloor);
-        const corridorChoice = getCorridorChoice(destinationFloor, destination);
-        const passText = formatRoomList(corridorChoice.passRooms);
-        const routeNodes = [startNode];
-
-        if (startFloor !== destinationFloor) {
-          routeNodes.push(`${verticalType.toUpperCase()}_TO_F${destinationFloor}`);
-          routeNodes.push(arrivalNode);
-        }
-
-        routeNodes.push(
-          `F${destinationFloor}_B21_ENTRY`,
-          `F${destinationFloor}_MAIN_CORRIDOR`,
-          `F${destinationFloor}_RING_ENTRY`,
-          `F${destinationFloor}_RING_ENTRY_TO_${corridorChoice.entryNeighbor}`,
-          ...corridorChoice.roomPath.map((room) => `ROOM_${room}`)
-        );
-
         const directions = [];
+        const start = path[0];
+        const startFloor = getFloorFromNode(start);
 
-        if (startFloor !== destinationFloor) {
-          directions.push(`Use the ${verticalType} from Floor ${startFloor} to Floor ${destinationFloor}.`);
-        }
-
-        directions.push(getStartInstruction(arrivalNode, destinationFloor));
-        directions.push('Turn left to enter Building 21.');
-
-        if (destinationFloor === 6) {
-          directions.push('Continue to the main corridor.');
-          directions.push('Continue to the circular corridor entrance.');
+        if (start.includes('ELEVATOR')) {
+          directions.push(`Exit the elevator on Floor ${startFloor}.`);
+        } else if (start.includes('STAIRS')) {
+          directions.push(`Exit the stairs on Floor ${startFloor}.`);
+        } else if (isRoom(start)) {
+          directions.push(`Exit Room ${start} into the corridor.`);
         } else {
-          directions.push('Continue to the circular corridor.');
+          directions.push(`Start at ${start}.`);
         }
 
-        directions.push(`Turn ${corridorChoice.direction} around the circular corridor.`);
+        const usedEntry = path.some((node) => node.includes('B21_ENTRY'));
+        if (usedEntry) directions.push('Turn left to enter Building 21.');
+        if (path.some((node) => node.includes('MAIN_CORRIDOR'))) directions.push('Continue to the main corridor.');
+        if (path.some((node) => node.includes('RING_ENTRY'))) directions.push('Continue to the circular corridor entrance.');
 
-        if (passText) {
-          directions.push(`Pass ${passText}.`);
+        const passedRooms = path.filter((node) => isRoom(node) && node !== destination);
+
+        if (passedRooms.length > 0) {
+          directions.push(`Follow the circular corridor and pass Room${passedRooms.length > 1 ? 's' : ''} ${passedRooms.join(', ')}.`);
+        } else {
+          directions.push('Follow the circular corridor toward your destination.');
         }
 
-        directions.push(`Room ${destination} will be on your left.`);
+        directions.push(`Arrive at Room ${destination}.`);
 
         return {
-          destination,
-          destinationFloor,
-          routeNodes,
+          routeNodes: path,
           directions,
-          estimate: `${directions.length} steps · shortest curated corridor route`,
-          finalConfirmation: `Final destination: Room ${destination}, ${FLOOR_DATA[destinationFloor].label}.`
+          confirmation: `You have arrived at Room ${destination}.`
         };
       }
+
+      function navigate(start, destination) {
+        const path = bfsShortestPath(buildingGraph, start, destination);
+        return generateDirections(path, destination);
+      }
+
+      addCircularFloor(buildingGraph, 'F6', floor6Rooms);
+      addCircularFloor(buildingGraph, 'F5', floor5Rooms);
+      addCircularFloor(buildingGraph, 'F4', floor4Rooms);
+      addEdge(buildingGraph, 'F4_ELEVATOR_LOBBY', 'F5_ELEVATOR_LOBBY');
+      addEdge(buildingGraph, 'F5_ELEVATOR_LOBBY', 'F6_ELEVATOR_LOBBY');
+      addEdge(buildingGraph, 'F4_STAIRS', 'F5_STAIRS');
+      addEdge(buildingGraph, 'F5_STAIRS', 'F6_STAIRS');
 
       function renderRoute(route, startId) {
-        summaryStart.textContent = getStartLabel(startId);
+        summaryStart.textContent = formatLocation(startId);
         summaryDestination.textContent = route.destination;
-        routeEstimate.textContent = route.estimate;
-        finalConfirmation.textContent = route.finalConfirmation;
+        routeEstimate.textContent = `${route.directions.length} steps · shortest graph route`;
+        finalConfirmation.textContent = route.confirmation;
 
         stepsContainer.innerHTML = route.directions
           .map((direction, index) => `
@@ -783,12 +759,12 @@
           .join('');
       }
 
-      Object.values(FLOOR_DATA)
-        .flatMap((floor) => floor.rooms)
+      Object.keys(buildingGraph)
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
         .forEach((room) => {
           const option = document.createElement('option');
           option.value = room;
-          roomList.appendChild(option);
+          locationList.appendChild(option);
         });
 
       function showScreen(screen) {
@@ -860,14 +836,22 @@
         event.preventDefault();
         routeError.classList.remove('visible');
 
-        const route = buildRoute(startSelect.value, destinationInput.value);
+        const start = startInput.value.trim();
+        const destination = destinationInput.value.trim();
 
-        if (!route) {
+        if (!buildingGraph[start] || !buildingGraph[destination]) {
           routeError.classList.add('visible');
           return;
         }
 
-        renderRoute(route, startSelect.value);
+        const route = navigate(start, destination);
+
+        if (!route.routeNodes.length) {
+          routeError.classList.add('visible');
+          return;
+        }
+
+        renderRoute(route, start);
         showScreen(directionsScreen);
       });
 
@@ -882,7 +866,7 @@
 
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./maze-sw.js?v=7');
+          navigator.serviceWorker.register('./maze-sw.js?v=8');
         });
       }
     </script>
