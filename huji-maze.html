@@ -535,7 +535,7 @@
               <form id="route-form" class="route-form">
                 <label>
                   Start
-                  <input id="start-input" list="location-list" placeholder="Example: 623 or F6_ELEVATOR_LOBBY" value="F6_ELEVATOR_LOBBY" required />
+                  <input id="start-input" list="location-list" placeholder="Example: 623 or F6_ELEVATOR_LOBBY" required />
                 </label>
 
                 <label>
@@ -573,7 +573,7 @@
             <article class="card directions-card">
               <div class="route-head">
                 <div>
-                  <h2 class="route-title"><span id="summary-start">Floor 6 elevator lobby</span> to Room <span id="summary-destination">618</span></h2>
+                  <h2 class="route-title"><span id="summary-start">Start</span> to <span id="summary-destination">destination</span></h2>
                   <p id="route-estimate" class="meta">Estimated walking directions</p>
                 </div>
               </div>
@@ -689,6 +689,25 @@
         return node;
       }
 
+      function getVerticalTravel(path, type) {
+        const nodes = path.filter((node) => node.includes(type));
+        if (nodes.length < 2) return null;
+
+        const startFloor = getFloorFromNode(nodes[0]);
+        const endFloor = getFloorFromNode(nodes[nodes.length - 1]);
+
+        if (startFloor === endFloor) return null;
+
+        return { startFloor, endFloor };
+      }
+
+      function entersBuilding21(path) {
+        return path.some((node, index) => {
+          const previous = path[index - 1];
+          return node.includes('B21_ENTRY') && previous && (previous.includes('ELEVATOR_LOBBY') || previous.includes('STAIRS'));
+        });
+      }
+
       function generateDirections(path, destination) {
         if (!path) {
           return {
@@ -701,8 +720,16 @@
         const directions = [];
         const start = path[0];
         const startFloor = getFloorFromNode(start);
+        const elevatorTravel = getVerticalTravel(path, 'ELEVATOR_LOBBY');
+        const stairTravel = getVerticalTravel(path, 'STAIRS');
 
-        if (start.includes('ELEVATOR')) {
+        if (elevatorTravel) {
+          directions.push(`Take the elevator from Floor ${elevatorTravel.startFloor} to Floor ${elevatorTravel.endFloor}.`);
+          directions.push(`Exit the elevator on Floor ${elevatorTravel.endFloor}.`);
+        } else if (stairTravel) {
+          directions.push(`Take the stairs from Floor ${stairTravel.startFloor} to Floor ${stairTravel.endFloor}.`);
+          directions.push(`Exit the stairs on Floor ${stairTravel.endFloor}.`);
+        } else if (start.includes('ELEVATOR')) {
           directions.push(`Exit the elevator on Floor ${startFloor}.`);
         } else if (start.includes('STAIRS')) {
           directions.push(`Exit the stairs on Floor ${startFloor}.`);
@@ -712,12 +739,11 @@
           directions.push(`Start at ${start}.`);
         }
 
-        const usedEntry = path.some((node) => node.includes('B21_ENTRY'));
-        if (usedEntry) directions.push('Turn left to enter Building 21.');
+        if (entersBuilding21(path)) directions.push('Turn left to enter Building 21.');
         if (path.some((node) => node.includes('MAIN_CORRIDOR'))) directions.push('Continue to the main corridor.');
         if (path.some((node) => node.includes('RING_ENTRY'))) directions.push('Continue to the circular corridor entrance.');
 
-        const passedRooms = path.filter((node) => isRoom(node) && node !== destination);
+        const passedRooms = path.slice(1).filter((node) => isRoom(node) && node !== destination);
 
         if (passedRooms.length > 0) {
           directions.push(`Follow the circular corridor and pass Room${passedRooms.length > 1 ? 's' : ''} ${passedRooms.join(', ')}.`);
@@ -730,7 +756,7 @@
         return {
           routeNodes: path,
           directions,
-          confirmation: `You have arrived at Room ${destination}.`
+          confirmation: `You have arrived at ${formatLocation(destination)}.`
         };
       }
 
@@ -749,7 +775,7 @@
 
       function renderRoute(route, startId) {
         summaryStart.textContent = formatLocation(startId);
-        summaryDestination.textContent = route.destination;
+        summaryDestination.textContent = formatLocation(route.destination);
         routeEstimate.textContent = `${route.directions.length} steps · shortest graph route`;
         finalConfirmation.textContent = route.confirmation;
 
@@ -877,7 +903,7 @@
 
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./maze-sw.js?v=10');
+          navigator.serviceWorker.register('./maze-sw.js?v=11');
         });
       }
     </script>
