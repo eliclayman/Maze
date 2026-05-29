@@ -1,4 +1,4 @@
-const CACHE_NAME = 'huji-maze-v8';
+const CACHE_NAME = 'huji-maze-v9';
 const APP_SHELL = [
   './huji-maze.html',
   './huji-maze.webmanifest',

@@ -192,13 +192,6 @@
         line-height: 1.5;
       }
 
-      .tabs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin: 20px 0 16px;
-      }
-
       .tab,
       .primary {
         min-height: 46px;
@@ -450,13 +443,8 @@
           </div>
 
           <div class="card auth-card">
-            <h1 class="auth-title">Login / Sign up</h1>
+            <h1 class="auth-title">Login</h1>
             <p class="muted">Enter player info.</p>
-
-            <div class="tabs" role="tablist" aria-label="Auth mode">
-              <button id="login-tab" class="tab active" type="button">Login</button>
-              <button id="signup-tab" class="tab" type="button">Sign up</button>
-            </div>
 
             <form id="auth-form" class="form-grid">
               <label>
@@ -584,8 +572,6 @@
       const directionsScreen = document.getElementById('directions-screen');
       const authForm = document.getElementById('auth-form');
       const authError = document.getElementById('auth-error');
-      const loginTab = document.getElementById('login-tab');
-      const signupTab = document.getElementById('signup-tab');
       const routeForm = document.getElementById('route-form');
       const startInput = document.getElementById('start-input');
       const destinationInput = document.getElementById('destination-input');
@@ -599,8 +585,6 @@
       const finalConfirmation = document.getElementById('final-confirmation');
       const backButton = document.getElementById('back-button');
       const logoutButton = document.getElementById('logout-button');
-
-      let authMode = 'login';
 
       const buildingGraph = {};
 
@@ -774,15 +758,9 @@
         screen.classList.add('active');
       }
 
-      function setAuthMode(mode) {
-        authMode = mode;
-        loginTab.classList.toggle('active', mode === 'login');
-        signupTab.classList.toggle('active', mode === 'signup');
-      }
-
       function collectProfile() {
         return {
-          mode: authMode,
+          mode: 'login',
           fullName: document.getElementById('full-name').value.trim(),
           email: document.getElementById('email').value.trim(),
           campusRole: document.getElementById('campus-role').value,
@@ -814,9 +792,6 @@
         showScreen(welcomeScreen);
         window.setTimeout(() => showScreen(plannerScreen), 2400);
       }
-
-      loginTab.addEventListener('click', () => setAuthMode('login'));
-      signupTab.addEventListener('click', () => setAuthMode('signup'));
 
       authForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -860,13 +835,12 @@
       logoutButton.addEventListener('click', () => {
         localStorage.removeItem('mazeUserProfile');
         authForm.reset();
-        setAuthMode('login');
         showScreen(authScreen);
       });
 
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./maze-sw.js?v=8');
+          navigator.serviceWorker.register('./maze-sw.js?v=9');
         });
       }
     </script>
