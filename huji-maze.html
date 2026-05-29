@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#080a0f" />
+    <meta name="theme-color" content="#07090f" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -11,19 +11,28 @@
     <link rel="manifest" href="./huji-maze.webmanifest" />
     <link rel="icon" href="./maze-icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-    <title>Maze</title>
+    <title>Maze | Hebrew University Indoor Navigation</title>
     <style>
       :root {
         color-scheme: dark;
-        --bg: #080a0f;
-        --card: rgba(17, 20, 29, 0.78);
-        --card-strong: rgba(21, 25, 36, 0.94);
-        --border: rgba(255, 255, 255, 0.1);
-        --text: #f4f5f8;
-        --muted: #8f95a3;
+        --bg: #07090f;
+        --bg-soft: #0b0e16;
+        --surface: rgba(18, 21, 31, 0.78);
+        --surface-strong: rgba(20, 24, 35, 0.94);
+        --surface-muted: rgba(255, 255, 255, 0.035);
+        --border: rgba(255, 255, 255, 0.095);
+        --border-strong: rgba(255, 255, 255, 0.16);
+        --text: #f5f6fb;
+        --muted: #9499a8;
+        --muted-strong: #c3c7d3;
         --blue: #1d5fd7;
-        --blue-soft: #7ea7ff;
-        --radius: 16px;
+        --blue-soft: #6f9dff;
+        --blue-glow: rgba(29, 95, 215, 0.28);
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+        --radius-lg: 18px;
+        --radius-md: 14px;
+        --radius-sm: 12px;
+        --container: 1180px;
       }
 
       * {
@@ -40,9 +49,31 @@
         min-height: 100vh;
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         background:
-          radial-gradient(circle at 50% -20%, rgba(29, 95, 215, 0.16), transparent 34rem),
-          linear-gradient(180deg, #0a0c12 0%, var(--bg) 100%);
+          radial-gradient(circle at 50% -20%, rgba(29, 95, 215, 0.18), transparent 34rem),
+          radial-gradient(circle at 100% 20%, rgba(66, 98, 170, 0.12), transparent 28rem),
+          linear-gradient(180deg, #080a10 0%, #07090f 48%, #05060a 100%);
         color: var(--text);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+        background-size: 56px 56px;
+        mask-image: linear-gradient(to bottom, black, transparent 82%);
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: radial-gradient(circle at center, transparent 0, rgba(0, 0, 0, 0.5) 78%);
       }
 
       button,
@@ -55,59 +86,128 @@
         cursor: pointer;
       }
 
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .app-shell {
+        min-height: 100vh;
+      }
+
       .topbar {
         position: sticky;
         top: 0;
-        z-index: 10;
+        z-index: 30;
         border-bottom: 1px solid var(--border);
-        background: rgba(8, 10, 15, 0.76);
-        backdrop-filter: blur(18px);
+        background: rgba(7, 9, 15, 0.76);
+        backdrop-filter: blur(20px);
       }
 
-      .topbar-inner {
-        width: min(980px, calc(100% - 32px));
-        height: 64px;
+      .nav-inner {
+        width: min(var(--container), calc(100% - 40px));
+        height: 72px;
         margin: 0 auto;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 22px;
       }
 
       .brand {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         font-weight: 650;
         letter-spacing: -0.03em;
       }
 
-      .mark {
-        width: 26px;
-        height: 26px;
+      .brand-mark {
+        width: 30px;
+        height: 30px;
         display: grid;
         place-items: center;
-        border: 1px solid rgba(126, 167, 255, 0.32);
-        border-radius: 9px;
-        background: rgba(29, 95, 215, 0.16);
-        color: var(--blue-soft);
+        border: 1px solid rgba(111, 157, 255, 0.34);
+        border-radius: 10px;
+        background: linear-gradient(145deg, rgba(29, 95, 215, 0.28), rgba(255, 255, 255, 0.035));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 32px var(--blue-glow);
       }
 
-      .pill {
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        padding: 7px 10px;
+      .brand-mark svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
         color: var(--muted);
-        font-size: 0.82rem;
+        font-size: 0.92rem;
+      }
+
+      .nav-links a {
+        transition: color 180ms ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      .nav-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 0 14px;
+        border: 1px solid var(--border-strong);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.055);
+        color: var(--text);
+        font-size: 0.9rem;
+        transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+      }
+
+      .nav-cta:hover {
+        border-color: rgba(111, 157, 255, 0.38);
+        background: rgba(255, 255, 255, 0.085);
+        transform: translateY(-1px);
       }
 
       main {
-        width: min(980px, calc(100% - 32px));
+        width: min(var(--container), calc(100% - 40px));
         margin: 0 auto;
-        padding: 54px 0 72px;
       }
 
-      .intro {
-        max-width: 620px;
+      .hero {
+        min-height: calc(100vh - 72px);
+        display: grid;
+        grid-template-columns: minmax(0, 1.04fr) minmax(360px, 0.72fr);
+        align-items: center;
+        gap: 56px;
+        padding: 84px 0 72px;
+      }
+
+      .eyebrow {
+        width: fit-content;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+        padding: 8px 11px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.035);
+        color: var(--muted-strong);
+        font-size: 0.82rem;
+      }
+
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: var(--blue-soft);
+        box-shadow: 0 0 18px var(--blue-soft);
       }
 
       h1,
@@ -118,120 +218,367 @@
       }
 
       h1 {
-        font-size: clamp(2.8rem, 8vw, 5.4rem);
-        line-height: 0.96;
+        max-width: 850px;
+        font-size: clamp(3rem, 7.4vw, 6.7rem);
+        line-height: 0.94;
         letter-spacing: -0.075em;
         font-weight: 680;
       }
 
-      .subhead {
-        margin-top: 18px;
+      .hero-copy {
+        max-width: 690px;
+        margin-top: 28px;
         color: var(--muted);
-        font-size: 1.08rem;
-        line-height: 1.55;
+        font-size: clamp(1rem, 2vw, 1.22rem);
+        line-height: 1.7;
       }
 
-      .planner {
-        margin-top: 34px;
+      .search-panel {
+        margin-top: 40px;
         border: 1px solid var(--border);
-        border-radius: var(--radius);
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025));
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.062), rgba(255, 255, 255, 0.026));
+        box-shadow: var(--shadow);
         overflow: hidden;
       }
 
-      .planner-grid {
+      .global-search {
         display: grid;
-        grid-template-columns: 1fr 1fr auto;
-      }
-
-      label {
-        display: grid;
-        gap: 8px;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 12px;
         padding: 16px;
-        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
       }
 
-      .label {
+      .icon {
+        width: 18px;
+        height: 18px;
         color: var(--muted);
-        font-size: 0.78rem;
       }
 
-      select,
-      input {
+      .global-search input {
         width: 100%;
         border: 0;
-        outline: 0;
+        outline: none;
         background: transparent;
         color: var(--text);
         font-size: 1rem;
       }
 
-      .find-button {
-        min-width: 132px;
-        border: 0;
-        background: var(--blue);
-        color: white;
-        font-weight: 650;
-        transition: filter 160ms ease, transform 160ms ease;
+      .global-search input::placeholder {
+        color: #737888;
       }
 
-      .find-button:hover {
-        filter: brightness(1.08);
-      }
-
-      .find-button:active {
-        transform: scale(0.99);
-      }
-
-      .suggestions {
-        display: flex;
-        gap: 8px;
-        padding: 12px;
-        border-top: 1px solid var(--border);
-      }
-
-      .suggestion {
+      .kbd {
         border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 4px 7px;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.04);
+        font-size: 0.76rem;
+      }
+
+      .quick-results {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .quick-card {
+        border: 0;
+        border-right: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        text-align: left;
+        padding: 16px;
+        transition: background 180ms ease;
+      }
+
+      .quick-card:last-child {
+        border-right: 0;
+      }
+
+      .quick-card:hover {
+        background: rgba(255, 255, 255, 0.045);
+      }
+
+      .quick-card span {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .planner-card,
+      .result-card,
+      .media-card,
+      .floor-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.064), rgba(255, 255, 255, 0.032));
+        box-shadow: var(--shadow);
+      }
+
+      .planner-card {
+        position: relative;
+        padding: 20px;
+      }
+
+      .planner-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+        background: radial-gradient(circle at 20% 0%, rgba(29, 95, 215, 0.18), transparent 48%);
+      }
+
+      .card-header {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .card-kicker {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .card-title {
+        margin-top: 5px;
+        font-size: 1.15rem;
+        letter-spacing: -0.035em;
+        font-weight: 650;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 9px;
+        border: 1px solid rgba(111, 157, 255, 0.22);
         border-radius: 999px;
+        color: var(--blue-soft);
+        background: rgba(29, 95, 215, 0.1);
+        font-size: 0.78rem;
+      }
+
+      .route-form {
+        position: relative;
+        display: grid;
+        gap: 14px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field-label {
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .field,
+      select {
+        width: 100%;
+        min-height: 48px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        outline: none;
+        background: rgba(5, 7, 12, 0.66);
+        color: var(--text);
+        padding: 0 13px;
+        transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      }
+
+      .field:focus,
+      select:focus {
+        border-color: rgba(111, 157, 255, 0.42);
+        box-shadow: 0 0 0 4px rgba(29, 95, 215, 0.15);
+        background: rgba(5, 7, 12, 0.86);
+      }
+
+      .primary-button {
+        min-height: 48px;
+        border: 1px solid rgba(111, 157, 255, 0.34);
+        border-radius: var(--radius-sm);
+        background: linear-gradient(180deg, #2a6aea, #174fbf);
+        color: white;
+        font-weight: 620;
+        box-shadow: 0 16px 42px rgba(29, 95, 215, 0.28);
+        transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+      }
+
+      .primary-button:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.04);
+        box-shadow: 0 20px 54px rgba(29, 95, 215, 0.35);
+      }
+
+      .secondary-button {
+        min-height: 42px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: rgba(255, 255, 255, 0.045);
+        color: var(--muted-strong);
+        padding: 0 13px;
+        transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
+      }
+
+      .secondary-button:hover {
+        border-color: var(--border-strong);
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--text);
+      }
+
+      .floor-card {
+        margin-top: 16px;
+        padding: 16px;
+      }
+
+      .floor-selector {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .floor-option {
+        min-height: 40px;
+        border: 1px solid var(--border);
+        border-radius: 11px;
         background: rgba(255, 255, 255, 0.035);
         color: var(--muted);
-        padding: 8px 11px;
-        font-size: 0.88rem;
-        transition: color 160ms ease, border-color 160ms ease, background 160ms ease;
+        transition: background 180ms ease, border-color 180ms ease, color 180ms ease;
       }
 
-      .suggestion:hover {
-        border-color: rgba(126, 167, 255, 0.36);
+      .floor-option:hover,
+      .floor-option.active {
+        border-color: rgba(111, 157, 255, 0.35);
         background: rgba(29, 95, 215, 0.12);
         color: var(--text);
       }
 
-      .empty {
-        margin-top: 18px;
+      .preview-shell {
+        margin-top: 22px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          rgba(255, 255, 255, 0.025);
+        background-size: 28px 28px;
+        padding: 18px;
+      }
+
+      .mini-map {
+        position: relative;
+        height: 176px;
+        overflow: hidden;
+        border-radius: 13px;
+        background: rgba(2, 4, 9, 0.42);
+      }
+
+      .map-room {
+        position: absolute;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .room-a {
+        left: 9%;
+        top: 18%;
+        width: 34%;
+        height: 28%;
+      }
+
+      .room-b {
+        right: 8%;
+        top: 12%;
+        width: 32%;
+        height: 33%;
+      }
+
+      .room-c {
+        left: 18%;
+        bottom: 14%;
+        width: 58%;
+        height: 24%;
+      }
+
+      .map-path {
+        position: absolute;
+        left: 15%;
+        top: 53%;
+        width: 69%;
+        height: 2px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, var(--blue-soft), var(--blue), var(--blue-soft));
+        box-shadow: 0 0 18px var(--blue-glow);
+      }
+
+      .map-pin {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border: 2px solid #dce7ff;
+        border-radius: 999px;
+        background: var(--blue);
+        box-shadow: 0 0 24px var(--blue-soft);
+      }
+
+      .pin-start {
+        left: 14%;
+        top: calc(53% - 5px);
+      }
+
+      .pin-end {
+        right: 14%;
+        top: calc(53% - 5px);
+      }
+
+      .section {
+        padding: 24px 0 92px;
+      }
+
+      .section-heading {
+        max-width: 680px;
+        margin-bottom: 24px;
+      }
+
+      .section-heading h2 {
+        font-size: clamp(2rem, 4vw, 3.6rem);
+        line-height: 1;
+        letter-spacing: -0.06em;
+        font-weight: 660;
+      }
+
+      .section-heading p {
+        margin-top: 14px;
         color: var(--muted);
-        font-size: 0.94rem;
+        line-height: 1.7;
       }
 
-      .empty.hidden {
+      .results-layout {
         display: none;
+        grid-template-columns: minmax(0, 0.96fr) minmax(330px, 0.58fr);
+        gap: 20px;
       }
 
-      .result {
-        display: none;
-        margin-top: 26px;
-        grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
-        gap: 18px;
-      }
-
-      .result.visible {
+      .results-layout.visible {
         display: grid;
-        animation: enter 280ms ease both;
+        animation: reveal 480ms ease both;
       }
 
-      @keyframes enter {
+      @keyframes reveal {
         from {
           opacity: 0;
-          transform: translateY(8px);
+          transform: translateY(14px);
         }
         to {
           opacity: 1;
@@ -239,248 +586,463 @@
         }
       }
 
-      .card {
+      .empty-state {
         border: 1px solid var(--border);
-        border-radius: var(--radius);
-        background: var(--card);
-      }
-
-      .route-card {
-        padding: 20px;
-      }
-
-      .route-head {
-        display: flex;
-        align-items: start;
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 18px;
-      }
-
-      .route-title {
-        font-size: 1.08rem;
-        letter-spacing: -0.03em;
-      }
-
-      .meta {
-        margin-top: 7px;
+        border-radius: var(--radius-lg);
+        padding: 30px;
         color: var(--muted);
-        font-size: 0.9rem;
+        background: rgba(255, 255, 255, 0.026);
       }
 
-      .reset {
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        background: transparent;
-        color: var(--muted);
-        padding: 7px 10px;
+      .empty-state.hidden {
+        display: none;
       }
 
-      .steps {
+      .result-card {
+        padding: 22px;
+      }
+
+      .route-meta {
         display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 10px;
+        margin: 20px 0;
       }
 
-      .step {
+      .meta-item {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 13px;
+        background: rgba(255, 255, 255, 0.026);
+      }
+
+      .meta-item span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .meta-item strong {
+        display: block;
+        margin-top: 5px;
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+
+      .timeline {
+        position: relative;
         display: grid;
-        grid-template-columns: 28px 1fr;
-        gap: 12px;
-        padding: 13px 0;
-        border-top: 1px solid var(--border);
+        gap: 0;
+      }
+
+      .timeline-item {
+        position: relative;
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        gap: 14px;
+        padding: 0 0 20px;
+      }
+
+      .timeline-item:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        left: 16px;
+        top: 34px;
+        bottom: 0;
+        width: 1px;
+        background: var(--border);
       }
 
       .step-number {
-        width: 28px;
-        height: 28px;
+        width: 34px;
+        height: 34px;
         display: grid;
         place-items: center;
+        border: 1px solid rgba(111, 157, 255, 0.26);
         border-radius: 999px;
-        background: rgba(29, 95, 215, 0.14);
-        color: var(--blue-soft);
-        font-size: 0.82rem;
+        background: rgba(29, 95, 215, 0.13);
+        color: #dce7ff;
+        font-size: 0.86rem;
         font-weight: 650;
       }
 
-      .step p {
-        color: #d8dbe3;
-        line-height: 1.55;
+      .step-content {
+        padding: 4px 0 0;
       }
 
-      .video-card {
+      .step-content h3 {
+        font-size: 0.98rem;
+        letter-spacing: -0.02em;
+      }
+
+      .step-content p {
+        margin-top: 7px;
+        color: var(--muted);
+        line-height: 1.64;
+      }
+
+      .media-card {
         overflow: hidden;
-        align-self: start;
       }
 
-      video {
+      .media-card video {
         display: block;
         width: 100%;
         aspect-ratio: 16 / 9;
-        background: #04060a;
+        background: #03050a;
       }
 
-      .video-label {
-        padding: 14px 16px;
+      .media-body {
+        padding: 18px;
+      }
+
+      .media-body p {
+        margin-top: 8px;
         color: var(--muted);
-        font-size: 0.9rem;
+        line-height: 1.6;
+        font-size: 0.93rem;
       }
 
-      @media (max-width: 760px) {
+      @media (max-width: 880px) {
+        .nav-inner,
         main {
-          padding-top: 38px;
+          width: min(100% - 28px, var(--container));
         }
 
-        .planner-grid,
-        .result {
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          min-height: auto;
+          grid-template-columns: 1fr;
+          gap: 28px;
+          padding: 54px 0 56px;
+        }
+
+        .quick-results {
           grid-template-columns: 1fr;
         }
 
-        label {
+        .quick-card {
           border-right: 0;
           border-bottom: 1px solid var(--border);
         }
 
-        .find-button {
-          min-height: 52px;
+        .quick-card:last-child {
+          border-bottom: 0;
         }
 
-        .suggestions {
-          overflow-x: auto;
-          scrollbar-width: none;
+        .results-layout {
+          grid-template-columns: 1fr;
         }
 
-        .suggestion {
-          white-space: nowrap;
+        .route-meta {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .topbar {
+          position: sticky;
+        }
+
+        .nav-inner {
+          height: 64px;
+        }
+
+        .brand {
+          font-size: 0.98rem;
+        }
+
+        .nav-cta {
+          min-height: 34px;
+          padding: 0 10px;
+          font-size: 0.82rem;
+        }
+
+        h1 {
+          font-size: clamp(3rem, 17vw, 4.8rem);
+        }
+
+        .hero-copy {
+          font-size: 1rem;
+        }
+
+        .search-panel,
+        .planner-card,
+        .result-card,
+        .media-card,
+        .floor-card {
+          border-radius: 16px;
+        }
+
+        .floor-selector {
+          grid-template-columns: repeat(2, 1fr);
         }
       }
     </style>
   </head>
   <body>
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <span class="mark">M</span>
-          <span>Maze</span>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="nav-inner">
+          <a class="brand" href="#top" aria-label="Maze home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 18V6l7 5 7-5v12l-7-5-7 5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span>Maze</span>
+          </a>
+
+          <nav class="nav-links" aria-label="Primary navigation">
+            <a href="#planner">Route planner</a>
+            <a href="#results">Directions</a>
+            <a href="#video">Video</a>
+          </nav>
+
+          <a class="nav-cta" href="#planner">Find route</a>
         </div>
-        <span class="pill">No GPS</span>
-      </div>
-    </header>
+      </header>
 
-    <main>
-      <section class="intro">
-        <h1>Find your way.</h1>
-        <p class="subhead">Hebrew University indoor directions.</p>
-      </section>
-
-      <form id="route-form" class="planner">
-        <div class="planner-grid">
-          <label>
-            <span class="label">Start</span>
-            <select id="start-select">
-              <option value="Campus Entrance 1">Campus Entrance 1</option>
-            </select>
-          </label>
-
-          <label>
-            <span class="label">Destination</span>
-            <input id="destination-input" value="Teva" list="destinations" autocomplete="off" />
-            <datalist id="destinations">
-              <option value="Teva"></option>
-            </datalist>
-          </label>
-
-          <button class="find-button" type="submit">Go</button>
-        </div>
-
-        <div class="suggestions">
-          <button class="suggestion" type="button" data-destination="Teva">Teva</button>
-        </div>
-      </form>
-
-      <p id="empty-state" class="empty">Choose a route.</p>
-
-      <section id="result" class="result">
-        <article class="card route-card">
-          <div class="route-head">
-            <div>
-              <h2 class="route-title"><span id="route-start">Campus Entrance 1</span> → <span id="route-destination">Teva</span></h2>
-              <p class="meta">8-10 min · video + steps</p>
+      <main id="top">
+        <section class="hero" aria-labelledby="hero-title">
+          <div>
+            <div class="eyebrow">
+              <span class="status-dot" aria-hidden="true"></span>
+              Hebrew University indoor navigation
             </div>
-            <button id="reset-route" class="reset" type="button">Reset</button>
+            <h1 id="hero-title">Find any room without guessing the building.</h1>
+            <p class="hero-copy">Maze gives students clear indoor directions through Hebrew University spaces using curated routes, floor context, and video walkthroughs. No GPS. No live tracking.</p>
+
+            <div class="search-panel" role="search">
+              <div class="global-search">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+                <input id="search-input" type="search" placeholder="Search rooms, offices, lecture halls, or campus locations" autocomplete="off" />
+                <span class="kbd">demo</span>
+              </div>
+
+              <div class="quick-results" aria-label="Suggested destinations">
+                <button class="quick-card" type="button" data-destination="Teva">
+                  Teva
+                  <span>Campus route with video</span>
+                </button>
+                <button class="quick-card" type="button" data-destination="Social Sciences Building">
+                  Social Sciences Building
+                  <span>Building 201 reference</span>
+                </button>
+                <button class="quick-card" type="button" data-destination="Library entrance">
+                  Library entrance
+                  <span>Landmark search</span>
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div class="steps">
-            <div class="step">
-              <div class="step-number">1</div>
-              <p>Exit Entrance 1 and go up the first stairs.</p>
+          <aside id="planner" class="planner-card" aria-labelledby="planner-title">
+            <div class="card-header">
+              <div>
+                <p class="card-kicker">Route planner</p>
+                <h2 id="planner-title" class="card-title">Generate directions</h2>
+              </div>
+              <span class="badge">No GPS</span>
             </div>
-            <div class="step">
-              <div class="step-number">2</div>
-              <p>Walk straight about 250 meters. Take the stairs going up on the left.</p>
-            </div>
-            <div class="step">
-              <div class="step-number">3</div>
-              <p>Continue about 250 meters, cross the bridge, then veer left into the plaza.</p>
-            </div>
-            <div class="step">
-              <div class="step-number">4</div>
-              <p>Turn left at the plaza and follow the building to the stairs going down.</p>
-            </div>
-            <div class="step">
-              <div class="step-number">5</div>
-              <p>Go down, continue along the path, and pass the International School on your left.</p>
-            </div>
-            <div class="step">
-              <div class="step-number">6</div>
-              <p>Veer right at the intersection and continue to the building.</p>
-            </div>
-          </div>
-        </article>
 
-        <aside class="card video-card">
-          <video controls playsinline preload="metadata">
-            <source src="./media/teva-route-mobile.m4v" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div class="video-label">Video walkthrough</div>
-        </aside>
-      </section>
-    </main>
+            <form id="route-form" class="route-form">
+              <label>
+                <span class="field-label">Starting Location</span>
+                <select id="start-select">
+                  <option value="Campus Entrance 1">Campus Entrance 1</option>
+                </select>
+              </label>
+
+              <label>
+                <span class="field-label">Destination</span>
+                <input id="destination-input" class="field" value="Teva" list="destinations" autocomplete="off" />
+                <datalist id="destinations">
+                  <option value="Teva"></option>
+                  <option value="Social Sciences Building"></option>
+                  <option value="Library entrance"></option>
+                </datalist>
+              </label>
+
+              <button class="primary-button" type="submit">Find Route</button>
+            </form>
+
+            <div class="floor-card" aria-label="Floor selector">
+              <p class="card-kicker">Floor context</p>
+              <div class="floor-selector">
+                <button class="floor-option" type="button">G</button>
+                <button class="floor-option active" type="button">1</button>
+                <button class="floor-option" type="button">2</button>
+                <button class="floor-option" type="button">3</button>
+              </div>
+            </div>
+
+            <div class="preview-shell" aria-hidden="true">
+              <div class="mini-map">
+                <div class="map-room room-a"></div>
+                <div class="map-room room-b"></div>
+                <div class="map-room room-c"></div>
+                <div class="map-path"></div>
+                <div class="map-pin pin-start"></div>
+                <div class="map-pin pin-end"></div>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section id="results" class="section" aria-labelledby="results-title">
+          <div class="section-heading">
+            <h2 id="results-title">Route result</h2>
+            <p>Start with a location and destination. Maze returns a readable route, floor context, and a video walkthrough when available.</p>
+          </div>
+
+          <div id="empty-state" class="empty-state">
+            Choose a starting location and destination to generate directions.
+          </div>
+
+          <div id="results-layout" class="results-layout">
+            <article class="result-card" aria-live="polite">
+              <div class="card-header">
+                <div>
+                  <p class="card-kicker">Curated route</p>
+                  <h2 class="card-title"><span id="route-start">Campus Entrance 1</span> to <span id="route-destination">Teva</span></h2>
+                </div>
+                <button id="reset-route" class="secondary-button" type="button">Reset</button>
+              </div>
+
+              <div class="route-meta">
+                <div class="meta-item">
+                  <span>Floor</span>
+                  <strong>Campus level</strong>
+                </div>
+                <div class="meta-item">
+                  <span>Walking time</span>
+                  <strong>8-10 min</strong>
+                </div>
+                <div class="meta-item">
+                  <span>Mode</span>
+                  <strong>Video + steps</strong>
+                </div>
+              </div>
+
+              <div class="timeline">
+                <div class="timeline-item">
+                  <div class="step-number">1</div>
+                  <div class="step-content">
+                    <h3>Leave Entrance 1</h3>
+                    <p>Exit the security booth at Entrance 1 and immediately go up the first flight of stairs.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="step-number">2</div>
+                  <div class="step-content">
+                    <h3>Continue to the upper staircase</h3>
+                    <p>Continue straight for about 250 meters until you reach another staircase on the left, with a path descending toward the main road on the right. Take the staircase going up.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="step-number">3</div>
+                  <div class="step-content">
+                    <h3>Cross the bridge</h3>
+                    <p>Continue for another 250 meters until you reach a bridge and cross it. After crossing the bridge, veer left into the plaza area.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="step-number">4</div>
+                  <div class="step-content">
+                    <h3>Move alongside the building</h3>
+                    <p>At the entrance to the plaza, turn left and walk alongside the building until you reach a staircase going down.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="step-number">5</div>
+                  <div class="step-content">
+                    <h3>Pass the International School</h3>
+                    <p>Go down the staircase and continue along the path, passing the International School on your left.</p>
+                  </div>
+                </div>
+
+                <div class="timeline-item">
+                  <div class="step-number">6</div>
+                  <div class="step-content">
+                    <h3>Arrive at the building</h3>
+                    <p>At the next intersection, veer right and stay on the path until you reach the building.</p>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <aside id="video" class="media-card">
+              <video controls playsinline preload="metadata">
+                <source src="./media/teva-route-mobile.m4v" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+              <div class="media-body">
+                <p class="card-kicker">Walkthrough</p>
+                <h2 class="card-title">Route video</h2>
+                <p>Use the video as a visual reference alongside the numbered route steps.</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+    </div>
 
     <script>
       const routeForm = document.getElementById('route-form');
       const startSelect = document.getElementById('start-select');
       const destinationInput = document.getElementById('destination-input');
+      const searchInput = document.getElementById('search-input');
       const emptyState = document.getElementById('empty-state');
-      const result = document.getElementById('result');
+      const resultsLayout = document.getElementById('results-layout');
       const routeStart = document.getElementById('route-start');
       const routeDestination = document.getElementById('route-destination');
       const resetRoute = document.getElementById('reset-route');
-      const suggestions = document.querySelectorAll('.suggestion');
+      const quickCards = document.querySelectorAll('.quick-card');
+      const floorOptions = document.querySelectorAll('.floor-option');
 
-      function showRoute() {
+      function showResults() {
+        const destination = destinationInput.value.trim() || 'Teva';
         routeStart.textContent = startSelect.value;
-        routeDestination.textContent = destinationInput.value.trim() || 'Teva';
+        routeDestination.textContent = destination;
         emptyState.classList.add('hidden');
-        result.classList.add('visible');
-        result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        resultsLayout.classList.add('visible');
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
       routeForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        showRoute();
+        showResults();
       });
 
-      suggestions.forEach((button) => {
-        button.addEventListener('click', () => {
-          destinationInput.value = button.dataset.destination;
-          showRoute();
+      quickCards.forEach((card) => {
+        card.addEventListener('click', () => {
+          destinationInput.value = card.dataset.destination;
+          searchInput.value = card.dataset.destination;
+          showResults();
+        });
+      });
+
+      floorOptions.forEach((option) => {
+        option.addEventListener('click', () => {
+          floorOptions.forEach((item) => item.classList.remove('active'));
+          option.classList.add('active');
         });
       });
 
       resetRoute.addEventListener('click', () => {
-        result.classList.remove('visible');
+        resultsLayout.classList.remove('visible');
         emptyState.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('planner').scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
 
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
