@@ -606,7 +606,7 @@
     </div>
 
     <script>
-      const DATA_ENDPOINT = '';
+      const DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwJlJxO5vUI7MqCjhSzND36ApEsfzVQluuZ7a2o7vjSorWB5ROAqJdWv6yBkjVUdWEXWQ/exec';
 
       const authScreen = document.getElementById('auth-screen');
       const welcomeScreen = document.getElementById('welcome-screen');
@@ -657,11 +657,13 @@
 
         if (!DATA_ENDPOINT) return;
 
+        const formData = new URLSearchParams(profile);
+
         await fetch(DATA_ENDPOINT, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(profile)
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData
         });
       }
 
