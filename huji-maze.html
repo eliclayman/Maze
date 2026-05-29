@@ -666,6 +666,8 @@
             direction,
             path,
             passRooms: path.slice(0, destinationIndex),
+            roomPath: path.slice(0, destinationIndex + 1),
+            entryNeighbor: path[0],
             stepCount: destinationIndex + 1
           };
         }
@@ -682,6 +684,8 @@
           direction: useLeft ? 'left' : 'right',
           path,
           passRooms: path.slice(0, destinationIndex),
+          roomPath: path.slice(0, destinationIndex + 1),
+          entryNeighbor: path[0],
           stepCount: destinationIndex + 1
         };
       }
@@ -715,9 +719,9 @@
         routeNodes.push(
           `F${destinationFloor}_B21_ENTRY`,
           `F${destinationFloor}_MAIN_CORRIDOR`,
-          `F${destinationFloor}_CIRCULAR_CORRIDOR_ENTRANCE`,
-          `F${destinationFloor}_CIRCULAR_CORRIDOR_${corridorChoice.direction.toUpperCase()}`,
-          `ROOM_${destination}`
+          `F${destinationFloor}_RING_ENTRY`,
+          `F${destinationFloor}_RING_ENTRY_TO_${corridorChoice.entryNeighbor}`,
+          ...corridorChoice.roomPath.map((room) => `ROOM_${room}`)
         );
 
         const directions = [];
@@ -878,7 +882,7 @@
 
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./maze-sw.js?v=6');
+          navigator.serviceWorker.register('./maze-sw.js?v=7');
         });
       }
     </script>
