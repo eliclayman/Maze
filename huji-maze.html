@@ -656,12 +656,14 @@
 
         if (!DATA_ENDPOINT) return;
 
-        const formData = new URLSearchParams(profile);
+        const formData = new FormData();
+        Object.entries(profile).forEach(([key, value]) => {
+          formData.append(key, value);
+        });
 
         await fetch(DATA_ENDPOINT, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: formData
         });
       }
@@ -706,7 +708,7 @@
 
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./maze-sw.js');
+          navigator.serviceWorker.register('./maze-sw.js?v=5');
         });
       }
     </script>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'huji-maze-v4';
+const CACHE_NAME = 'huji-maze-v5';
 const APP_SHELL = [
   './huji-maze.html',
   './huji-maze.webmanifest',
@@ -24,5 +24,22 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
+
+  const request = event.request;
+  const acceptsHtml = request.headers.get('accept')?.includes('text/html');
+
+  if (acceptsHtml) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  event.respondWith(caches.match(request).then((cached) => cached || fetch(request)));
 });
