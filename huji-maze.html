@@ -227,6 +227,27 @@
         gap: 13px;
       }
 
+      .quick-routes {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .quick-route {
+        border: 2px solid var(--line);
+        background: #0e0d1f;
+        color: var(--muted);
+        padding: 11px;
+        box-shadow: 3px 3px 0 #000;
+        text-align: left;
+      }
+
+      .quick-route:hover {
+        border-color: var(--cyan);
+        color: var(--ink);
+      }
+
       label {
         display: grid;
         gap: 7px;
@@ -508,23 +529,30 @@
             <div class="planner-layout">
               <div>
                 <h1>Choose route</h1>
-                <p class="route-note">Start and destination.</p>
+                <p class="route-note">Use any room, stairs, or elevator lobby.</p>
               </div>
 
               <form id="route-form" class="route-form">
                 <label>
                   Start
-                  <input id="start-input" list="location-list" value="F6_ELEVATOR_LOBBY" required />
+                  <input id="start-input" list="location-list" placeholder="Example: 623 or F6_ELEVATOR_LOBBY" value="F6_ELEVATOR_LOBBY" required />
                 </label>
 
                 <label>
                   Destination
-                  <input id="destination-input" list="location-list" placeholder="618" required />
+                  <input id="destination-input" list="location-list" placeholder="Example: 606, 518, 21418" required />
                   <datalist id="location-list"></datalist>
                 </label>
 
                 <button class="primary" type="submit">Get directions</button>
                 <p id="route-error" class="error">Location not found in Building 21.</p>
+
+                <div class="quick-routes" aria-label="Example routes">
+                  <button class="quick-route" type="button" data-start="F6_ELEVATOR_LOBBY" data-destination="618">F6 elevator → 618</button>
+                  <button class="quick-route" type="button" data-start="623" data-destination="606">623 → 606</button>
+                  <button class="quick-route" type="button" data-start="F4_ELEVATOR_LOBBY" data-destination="21418">F4 elevator → 21418</button>
+                  <button class="quick-route" type="button" data-start="21402" data-destination="534">21402 → 534</button>
+                </div>
               </form>
             </div>
           </div>
@@ -585,6 +613,7 @@
       const finalConfirmation = document.getElementById('final-confirmation');
       const backButton = document.getElementById('back-button');
       const logoutButton = document.getElementById('logout-button');
+      const quickRoutes = document.querySelectorAll('.quick-route');
 
       const buildingGraph = {};
 
@@ -830,6 +859,14 @@
         showScreen(directionsScreen);
       });
 
+      quickRoutes.forEach((button) => {
+        button.addEventListener('click', () => {
+          startInput.value = button.dataset.start;
+          destinationInput.value = button.dataset.destination;
+          routeForm.requestSubmit();
+        });
+      });
+
       backButton.addEventListener('click', () => showScreen(plannerScreen));
 
       logoutButton.addEventListener('click', () => {
@@ -840,7 +877,7 @@
 
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./maze-sw.js?v=9');
+          navigator.serviceWorker.register('./maze-sw.js?v=10');
         });
       }
     </script>
