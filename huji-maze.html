@@ -527,18 +527,23 @@
                 <label>
                   Start
                   <select id="start-select">
-                    <option value="Campus Entrance 1">Campus Entrance 1</option>
+                    <option value="F6_ELEVATOR_LOBBY">Floor 6 elevator lobby</option>
+                    <option value="F6_STAIRS">Floor 6 stairs</option>
+                    <option value="F5_ELEVATOR_LOBBY">Floor 5 elevator lobby</option>
+                    <option value="F5_STAIRS">Floor 5 stairs</option>
+                    <option value="F4_ELEVATOR_LOBBY">Floor 4 elevator lobby</option>
+                    <option value="F4_STAIRS">Floor 4 stairs</option>
                   </select>
                 </label>
 
                 <label>
                   Destination
-                  <select id="destination-select">
-                    <option value="Teva">Teva</option>
-                  </select>
+                  <input id="destination-input" list="room-list" placeholder="618" required />
+                  <datalist id="room-list"></datalist>
                 </label>
 
                 <button class="primary" type="submit">Get directions</button>
+                <p id="route-error" class="error">Room not found in Building 21.</p>
               </form>
             </div>
           </div>
@@ -559,45 +564,18 @@
             <article class="card directions-card">
               <div class="route-head">
                 <div>
-                  <h2 class="route-title"><span id="summary-start">Campus Entrance 1</span> to <span id="summary-destination">Teva</span></h2>
-                  <p class="meta">8-10 min</p>
+                  <h2 class="route-title"><span id="summary-start">Floor 6 elevator lobby</span> to Room <span id="summary-destination">618</span></h2>
+                  <p id="route-estimate" class="meta">Estimated walking directions</p>
                 </div>
               </div>
 
-              <div class="steps">
-                <div class="step">
-                  <div class="num">1</div>
-                  <p>Exit the security booth at Entrance 1 and go up the first flight of stairs.</p>
-                </div>
-                <div class="step">
-                  <div class="num">2</div>
-                  <p>Walk straight about 250 meters. At the next staircase on the left, go up.</p>
-                </div>
-                <div class="step">
-                  <div class="num">3</div>
-                  <p>Continue about 250 meters, cross the bridge, then veer left into the plaza.</p>
-                </div>
-                <div class="step">
-                  <div class="num">4</div>
-                  <p>At the plaza entrance, turn left and follow the building to the stairs going down.</p>
-                </div>
-                <div class="step">
-                  <div class="num">5</div>
-                  <p>Go down the stairs and continue along the path, passing the International School on your left.</p>
-                </div>
-                <div class="step">
-                  <div class="num">6</div>
-                  <p>At the intersection, veer right and continue until you reach the building.</p>
-                </div>
-              </div>
+              <div id="steps" class="steps"></div>
             </article>
 
-            <aside class="card video-card">
-              <video controls playsinline preload="metadata">
-                <source src="./media/teva-route-mobile.m4v" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div class="video-caption">Video walkthrough</div>
+            <aside class="card directions-card">
+              <h2 class="route-title">Route nodes</h2>
+              <div id="route-nodes" class="steps"></div>
+              <p id="final-confirmation" class="video-caption">Room confirmation</p>
             </aside>
           </div>
         </div>
@@ -617,13 +595,197 @@
       const signupTab = document.getElementById('signup-tab');
       const routeForm = document.getElementById('route-form');
       const startSelect = document.getElementById('start-select');
-      const destinationSelect = document.getElementById('destination-select');
+      const destinationInput = document.getElementById('destination-input');
+      const roomList = document.getElementById('room-list');
       const summaryStart = document.getElementById('summary-start');
       const summaryDestination = document.getElementById('summary-destination');
+      const routeEstimate = document.getElementById('route-estimate');
+      const routeError = document.getElementById('route-error');
+      const stepsContainer = document.getElementById('steps');
+      const routeNodesContainer = document.getElementById('route-nodes');
+      const finalConfirmation = document.getElementById('final-confirmation');
       const backButton = document.getElementById('back-button');
       const logoutButton = document.getElementById('logout-button');
 
       let authMode = 'login';
+
+      const FLOOR_DATA = {
+        6: {
+          label: 'Floor 6',
+          rooms: ['623', '622', '621', '620', '619', '618', '617', '616', '615', '614', '613', '612', '611', '610', '609', '608', '607', '606', '605', '604', '603', '602', '601'],
+          entranceLeft: ['623'],
+          entranceRight: ['601', '602', '603', '604', '605', '606', '607', '608', '609', '610', '611', '612', '613', '614', '615', '616', '617', '618', '619', '620', '621', '622']
+        },
+        5: {
+          label: 'Floor 5',
+          rooms: ['534', '533', '532', '531', '530', '529', '528', '527', '526', '525', '524', '523', '522', '521', '520', '519', '518', '517', '516', '515', '514', '513', '512', '511', '510', '509', '508', '507', '506', '505', '504', '503', '502']
+        },
+        4: {
+          label: 'Floor 4',
+          rooms: ['21434', '21433', '21432', '21431', '21430', '21429', '21428', '21427', '21426', '21425', '21424', '21423', '21422', '21421', '21420', '21419', '21418', '21417', '21416', '21415', '21414', '21413', '21412', '21411', '21410', '21409', '21408', '21407', '21406', '21405', '21404', '21403', '21402']
+        }
+      };
+
+      function getFloorFromStart(startId) {
+        const match = startId.match(/^F(\d)_/);
+        return match ? Number(match[1]) : null;
+      }
+
+      function getFloorFromRoom(room) {
+        if (FLOOR_DATA[6].rooms.includes(room)) return 6;
+        if (FLOOR_DATA[5].rooms.includes(room)) return 5;
+        if (FLOOR_DATA[4].rooms.includes(room)) return 4;
+        return null;
+      }
+
+      function getStartLabel(startId) {
+        const floor = getFloorFromStart(startId);
+        const vertical = startId.includes('STAIRS') ? 'stairs' : 'elevator lobby';
+        return `Floor ${floor} ${vertical}`;
+      }
+
+      function getVerticalNode(startId, floor) {
+        return startId.includes('STAIRS') ? `F${floor}_STAIRS` : `F${floor}_ELEVATOR_LOBBY`;
+      }
+
+      function getStartInstruction(startId, floor) {
+        if (startId.includes('STAIRS')) return `Exit the stairs on Floor ${floor}.`;
+        return `Exit the elevator on Floor ${floor}.`;
+      }
+
+      function getCorridorChoice(floor, destination) {
+        const floorData = FLOOR_DATA[floor];
+
+        if (floor === 6) {
+          const leftPath = floorData.entranceLeft;
+          const rightPath = floorData.entranceRight;
+          const direction = leftPath.includes(destination) ? 'left' : 'right';
+          const path = direction === 'left' ? leftPath : rightPath;
+          const destinationIndex = path.indexOf(destination);
+          return {
+            direction,
+            path,
+            passRooms: path.slice(0, destinationIndex),
+            stepCount: destinationIndex + 1
+          };
+        }
+
+        const leftPath = floorData.rooms;
+        const rightPath = [...floorData.rooms].reverse();
+        const leftIndex = leftPath.indexOf(destination);
+        const rightIndex = rightPath.indexOf(destination);
+        const useLeft = leftIndex <= rightIndex;
+        const path = useLeft ? leftPath : rightPath;
+        const destinationIndex = useLeft ? leftIndex : rightIndex;
+
+        return {
+          direction: useLeft ? 'left' : 'right',
+          path,
+          passRooms: path.slice(0, destinationIndex),
+          stepCount: destinationIndex + 1
+        };
+      }
+
+      function formatRoomList(rooms) {
+        if (rooms.length === 0) return '';
+        if (rooms.length === 1) return `Room ${rooms[0]}`;
+        const allButLast = rooms.slice(0, -1).map((room) => `Room ${room}`).join(', ');
+        return `${allButLast}, and Room ${rooms[rooms.length - 1]}`;
+      }
+
+      function buildRoute(startId, destinationRaw) {
+        const destination = destinationRaw.trim();
+        const destinationFloor = getFloorFromRoom(destination);
+
+        if (!destinationFloor) return null;
+
+        const startFloor = getFloorFromStart(startId);
+        const verticalType = startId.includes('STAIRS') ? 'stairs' : 'elevator';
+        const startNode = startId;
+        const arrivalNode = getVerticalNode(startId, destinationFloor);
+        const corridorChoice = getCorridorChoice(destinationFloor, destination);
+        const passText = formatRoomList(corridorChoice.passRooms);
+        const routeNodes = [startNode];
+
+        if (startFloor !== destinationFloor) {
+          routeNodes.push(`${verticalType.toUpperCase()}_TO_F${destinationFloor}`);
+          routeNodes.push(arrivalNode);
+        }
+
+        routeNodes.push(
+          `F${destinationFloor}_B21_ENTRY`,
+          `F${destinationFloor}_MAIN_CORRIDOR`,
+          `F${destinationFloor}_CIRCULAR_CORRIDOR_ENTRANCE`,
+          `F${destinationFloor}_CIRCULAR_CORRIDOR_${corridorChoice.direction.toUpperCase()}`,
+          `ROOM_${destination}`
+        );
+
+        const directions = [];
+
+        if (startFloor !== destinationFloor) {
+          directions.push(`Use the ${verticalType} from Floor ${startFloor} to Floor ${destinationFloor}.`);
+        }
+
+        directions.push(getStartInstruction(arrivalNode, destinationFloor));
+        directions.push('Turn left to enter Building 21.');
+
+        if (destinationFloor === 6) {
+          directions.push('Continue to the main corridor.');
+          directions.push('Continue to the circular corridor entrance.');
+        } else {
+          directions.push('Continue to the circular corridor.');
+        }
+
+        directions.push(`Turn ${corridorChoice.direction} around the circular corridor.`);
+
+        if (passText) {
+          directions.push(`Pass ${passText}.`);
+        }
+
+        directions.push(`Room ${destination} will be on your left.`);
+
+        return {
+          destination,
+          destinationFloor,
+          routeNodes,
+          directions,
+          estimate: `${directions.length} steps · shortest curated corridor route`,
+          finalConfirmation: `Final destination: Room ${destination}, ${FLOOR_DATA[destinationFloor].label}.`
+        };
+      }
+
+      function renderRoute(route, startId) {
+        summaryStart.textContent = getStartLabel(startId);
+        summaryDestination.textContent = route.destination;
+        routeEstimate.textContent = route.estimate;
+        finalConfirmation.textContent = route.finalConfirmation;
+
+        stepsContainer.innerHTML = route.directions
+          .map((direction, index) => `
+            <div class="step">
+              <div class="num">${index + 1}</div>
+              <p>${direction}</p>
+            </div>
+          `)
+          .join('');
+
+        routeNodesContainer.innerHTML = route.routeNodes
+          .map((node, index) => `
+            <div class="step">
+              <div class="num">${index + 1}</div>
+              <p>${node}</p>
+            </div>
+          `)
+          .join('');
+      }
+
+      Object.values(FLOOR_DATA)
+        .flatMap((floor) => floor.rooms)
+        .forEach((room) => {
+          const option = document.createElement('option');
+          option.value = room;
+          roomList.appendChild(option);
+        });
 
       function showScreen(screen) {
         [authScreen, welcomeScreen, plannerScreen, directionsScreen].forEach((item) => {
@@ -692,8 +854,16 @@
 
       routeForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        summaryStart.textContent = startSelect.value;
-        summaryDestination.textContent = destinationSelect.value;
+        routeError.classList.remove('visible');
+
+        const route = buildRoute(startSelect.value, destinationInput.value);
+
+        if (!route) {
+          routeError.classList.add('visible');
+          return;
+        }
+
+        renderRoute(route, startSelect.value);
         showScreen(directionsScreen);
       });
 
@@ -708,7 +878,7 @@
 
       if ('serviceWorker' in navigator && ['http:', 'https:'].includes(window.location.protocol)) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./maze-sw.js?v=5');
+          navigator.serviceWorker.register('./maze-sw.js?v=6');
         });
       }
     </script>
