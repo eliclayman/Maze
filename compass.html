@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#13294b" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Campus Compass" />
+    <title>HUJI Campus Compass — Building 21</title>
+    <style>
+      :root {
+        --bg: #f4f6fb;
+        --surface: #ffffff;
+        --ink: #1b2233;
+        --muted: #61708c;
+        --line: #dbe2ee;
+        --brand: #13294b;      /* HUJI deep blue */
+        --brand-2: #1e4ea8;
+        --accent: #7b1e3b;     /* building 21 maroon */
+        --accent-soft: #f6e9ee;
+        --good: #1f8a5b;
+        --focus: #2f6df6;
+        --radius: 16px;
+        --shadow: 0 6px 24px rgba(19, 41, 75, 0.08);
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Heebo", "Assistant", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      button, input, select, textarea { font: inherit; color: inherit; }
+      button { cursor: pointer; }
+      .app { min-height: 100%; display: flex; flex-direction: column; }
+
+      .topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 12px; padding: 14px 18px;
+        background: var(--brand); color: #fff;
+        position: sticky; top: 0; z-index: 10;
+      }
+      .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .2px; }
+      .brand .logo {
+        width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+        background: #fff; color: var(--brand); font-weight: 800;
+      }
+      .brand small { display: block; font-weight: 500; opacity: .8; font-size: .72rem; letter-spacing: .3px; }
+      .topbar .ghost {
+        background: transparent; border: 1px solid rgba(255,255,255,.35);
+        color: #fff; padding: 7px 12px; border-radius: 999px; font-size: .85rem;
+      }
+      .topbar .ghost:hover { background: rgba(255,255,255,.12); }
+
+      .screen { display: none; flex: 1; }
+      .screen.active { display: block; animation: rise .22s ease both; }
+      @keyframes rise { from { opacity: 0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+
+      .wrap { width: min(720px, 100%); margin: 0 auto; padding: 22px 18px 40px; }
+      .card {
+        background: var(--surface); border: 1px solid var(--line);
+        border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px;
+      }
+      h1 { font-size: 1.5rem; margin: 0 0 4px; letter-spacing: -.01em; }
+      h2 { font-size: 1.15rem; margin: 0 0 2px; }
+      .sub { color: var(--muted); margin: 0 0 18px; }
+      .field { display: grid; gap: 6px; margin-bottom: 14px; }
+      label .lab { font-size: .82rem; font-weight: 600; color: var(--ink); }
+      input, select {
+        width: 100%; padding: 12px 13px; border: 1px solid var(--line);
+        border-radius: 11px; background: #fff; outline: none;
+      }
+      input:focus, select:focus { border-color: var(--focus); box-shadow: 0 0 0 3px rgba(47,109,246,.15); }
+      .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .85rem; color: var(--muted); }
+      .consent input { width: auto; margin-top: 3px; }
+      .primary {
+        width: 100%; padding: 13px 16px; border: 0; border-radius: 12px;
+        background: var(--brand-2); color: #fff; font-weight: 700; font-size: 1rem;
+        box-shadow: 0 4px 14px rgba(30,78,168,.28);
+      }
+      .primary:hover { background: #1b4694; }
+      .primary:active { transform: translateY(1px); }
+      .err { display: none; color: #b42318; font-size: .85rem; margin-top: 6px; }
+      .err.show { display: block; }
+
+      /* Planner */
+      .start-chip {
+        display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+        background: var(--accent-soft); border: 1px solid #ecd3da; border-radius: 12px; margin-bottom: 16px;
+      }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); flex: none; }
+      .start-chip b { color: var(--accent); }
+      .start-chip span { color: var(--muted); font-size: .9rem; }
+
+      .results { margin-top: 8px; display: grid; gap: 8px; max-height: 320px; overflow: auto; }
+      .result {
+        display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        text-align: left; width: 100%; padding: 12px 14px; border: 1px solid var(--line);
+        border-radius: 12px; background: #fff;
+      }
+      .result:hover { border-color: var(--brand-2); background: #f7f9ff; }
+      .result .rn { font-weight: 700; }
+      .result .meta { color: var(--muted); font-size: .85rem; }
+      .pill { font-size: .72rem; padding: 3px 9px; border-radius: 999px; background: #eef2f9; color: var(--muted); }
+
+      /* Floor → room picker */
+      .step-label { font-size: .78rem; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: .05em; margin: 18px 0 10px; }
+      .step-label .tag { color: var(--accent); }
+      .floor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+      .floor-btn { text-align: left; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+      .floor-btn:hover { border-color: var(--brand-2); background: #f7f9ff; }
+      .floor-btn.active { border-color: var(--brand-2); background: #eef3ff; box-shadow: 0 0 0 2px rgba(30, 78, 168, .18); }
+      .floor-btn b { display: block; font-size: 1.05rem; }
+      .floor-btn span { color: var(--muted); font-size: .8rem; }
+      #room-filter { margin-bottom: 12px; }
+      .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 8px; max-height: 320px; overflow: auto; padding: 2px; }
+      .room-chip { padding: 13px 6px; text-align: center; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-weight: 600; }
+      .room-chip:hover { border-color: var(--brand-2); background: #f7f9ff; }
+
+      /* Directions */
+      .route-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+      .route-head .from { color: var(--accent); font-weight: 700; }
+      .route-head .arrow { color: var(--muted); }
+      .route-head .to { color: var(--brand); font-weight: 800; }
+      .est { color: var(--muted); font-size: .9rem; margin: 0 0 16px; }
+      .map { width: 100%; background: #fbfcfe; border: 1px solid var(--line); border-radius: 14px; margin-bottom: 18px; }
+      .steps { display: grid; gap: 10px; counter-reset: s; }
+      .step { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
+      .step .n {
+        width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+        background: var(--brand); color: #fff; font-size: .85rem; font-weight: 700; margin-top: 1px;
+      }
+      .step.arrive .n { background: var(--good); }
+      .step p { margin: 0; }
+      .step .turn { font-weight: 700; color: var(--accent); }
+      .backbar { display: flex; gap: 10px; margin-bottom: 16px; }
+      .backbar button { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; }
+      .backbar button:hover { border-color: var(--brand-2); }
+      .hint { margin-top: 14px; font-size: .8rem; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="topbar">
+        <div class="brand">
+          <span class="logo">21</span>
+          <div>
+            HUJI Campus Compass
+            <small>Building 21 · Faculty of Social Sciences · Mount Scopus</small>
+          </div>
+        </div>
+        <button id="logout" class="ghost" type="button" style="display:none">Log out</button>
+      </div>
+
+      <!-- LOGIN -->
+      <section id="login-screen" class="screen active">
+        <div class="wrap">
+          <div class="card">
+            <h1>Welcome</h1>
+            <p class="sub">Quick sign-in so we can improve campus navigation. Then we'll guide you from the building entrance to where you need to go.</p>
+            <form id="login-form" novalidate>
+              <label class="field"><span class="lab">Full name</span>
+                <input id="f-name" autocomplete="name" placeholder="Your name" required /></label>
+              <label class="field"><span class="lab">Email</span>
+                <input id="f-email" type="email" autocomplete="email" placeholder="you@example.com" required /></label>
+              <label class="field"><span class="lab">I am a…</span>
+                <select id="f-role" required>
+                  <option value="">Select one</option>
+                  <option>New student</option>
+                  <option>Visitor</option>
+                  <option>Guest</option>
+                  <option>Staff</option>
+                  <option>Other</option>
+                </select></label>
+              <label class="consent field">
+                <input id="f-consent" type="checkbox" required />
+                <span>I agree to share this information to help improve campus navigation.</span></label>
+              <button class="primary" type="submit">Continue</button>
+              <p id="login-err" class="err">Please complete the required fields.</p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLANNER -->
+      <section id="planner-screen" class="screen">
+        <div class="wrap">
+          <div class="card">
+            <h1>Where do you need to go?</h1>
+            <p class="sub">We'll guide you step by step from the building entrance.</p>
+            <div class="start-chip">
+              <span class="dot"></span>
+              <div><b>Start: Main entrance</b><br /><span>Ground floor · faculty secretariats</span></div>
+            </div>
+            <div class="step-label">1 · Choose a floor</div>
+            <div id="floor-grid" class="floor-grid"></div>
+
+            <div id="room-section" style="display:none">
+              <div class="step-label">2 · Choose your room <span id="room-floor-tag" class="tag"></span></div>
+              <input id="room-filter" placeholder="Filter rooms…" autocomplete="off" />
+              <div id="room-grid" class="room-grid"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DIRECTIONS -->
+      <section id="directions-screen" class="screen">
+        <div class="wrap">
+          <div class="backbar">
+            <button id="back" type="button">← New search</button>
+          </div>
+          <div class="card">
+            <div class="route-head">
+              <span class="from">Main entrance</span>
+              <span class="arrow">→</span>
+              <span class="to" id="dest-label">Room</span>
+            </div>
+            <p class="est" id="estimate">Walking directions</p>
+            <svg id="map" class="map" viewBox="0 0 400 340" role="img" aria-label="Schematic floor map"></svg>
+            <div id="steps" class="steps"></div>
+            <p class="hint">Directions are schematic and based on the building floor plans. Found something off? Tell us — it helps us improve.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      /* ============================================================
+         HUJI Campus Compass — Building 21 POC
+         Real geometric model + heading-based directions engine.
+         Replaces the old "numeric ring / no geometry" prototype.
+         ============================================================ */
+
+      const DATA_ENDPOINT =
+        'https://script.google.com/macros/s/AKfycbwJlJxO5vUI7MqCjhSzND36ApEsfzVQluuZ7a2o7vjSorWB5ROAqJdWv6yBkjVUdWEXWQ/exec';
+
+      /* ---- Building model -------------------------------------------------
+         The building is a diamond tower wrapped around a central atrium.
+         Office floors are a ring of doors around the atrium (red railing),
+         reached from the central stair/elevator core. The entrance is on the
+         ground floor by the faculty secretariats.
+         We model the ring on a circle for clean turn geometry; the on-screen
+         map is schematic. Room ORDER around the ring is sequential (verified
+         pattern from the plans + the floor-5 walkthrough: 521, 522, 523 …).
+      --------------------------------------------------------------------- */
+
+      // Office-floor room sets — human-verified (floor 5 matched the walkthrough
+      // video exactly; floors 4 & 6 carried over from the original prototype).
+      // Room code = 21 + floor digit + 2-digit room number (e.g. 21521 = bld 21, floor 5, room 21).
+      const seq = (a, b) => { const r = []; for (let n = a; n <= b; n++) r.push(String(n)); return r; };
+      const floor4Rooms = seq(21402, 21434);
+      const floor5Rooms = seq(21502, 21534);
+      const floor6Rooms = seq(21601, 21623);
+
+      // Optional occupant names — fill from the door signs to enable name search.
+      // (Left empty by design; we don't want to guess real people's names.)
+      const people = {
+        // '521': { en: 'Dr. …', he: 'ד״ר …' },
+      };
+
+      const FLOORS = {
+        4: { label: 'Floor 4', kind: 'Faculty offices', rooms: floor4Rooms, access: 'elevator' },
+        5: { label: 'Floor 5', kind: 'Faculty offices', rooms: floor5Rooms, access: 'elevator' },
+        6: { label: 'Floor 6', kind: 'Faculty offices', rooms: floor6Rooms, access: 'elevator' },
+      };
+
+      const ENTRANCE = { floor: 'G', label: 'Main entrance', note: 'Ground floor · secretariats' };
+
+      /* ---- Geometry helpers ---------------------------------------------- */
+      const CX = 200, CY = 165;          // atrium centre (map coords, y-down)
+      const R_CORR = 95;                 // ring corridor radius
+      const R_DOOR = 125;                // door (outer wall) radius
+      const LANDING_ANGLE = Math.PI / 2; // arrive at the ring from the south (bottom)
+
+      // angle for room i around the ring, clockwise from the bottom (landing side)
+      function roomAngle(i, n) { return LANDING_ANGLE + (i + 1) * (2 * Math.PI / (n + 1)); }
+      function pt(angle, r) { return { x: CX + r * Math.cos(angle), y: CY + r * Math.sin(angle) }; }
+
+      // 2D cross product z-component; in screen coords (y-down) > 0 means b is to
+      // the LEFT of a's heading. Calibrated so map + text agree.
+      function sideOf(heading, toDoor) {
+        const z = heading.x * toDoor.y - heading.y * toDoor.x;
+        return z > 0 ? 'right' : 'left';
+      }
+      function sub(a, b) { return { x: a.x - b.x, y: a.y - b.y }; }
+
+      /* ---- The directions engine ----------------------------------------
+         Canonical "from the entrance" journey to an office on a ring floor:
+         entrance → lobby → central core → up → onto the ring → around to room.
+         Turn direction (left/right) and which side the door is on are computed
+         from the real ring geometry, not hard-coded.
+      --------------------------------------------------------------------- */
+      function buildRoute(floorNum, room) {
+        const f = FLOORS[floorNum];
+        const n = f.rooms.length;
+        const idx = f.rooms.indexOf(room);
+        const landing = pt(LANDING_ANGLE, R_CORR);
+
+        // shorter way around the ring
+        const cwSteps = idx + 1;            // rooms increase clockwise from landing
+        const ccwSteps = n - idx;           // the other way around
+        const goClockwise = cwSteps <= ccwSteps;
+        const passCount = (goClockwise ? cwSteps : ccwSteps) - 1;
+
+        // corridor node + door for the destination
+        const a = roomAngle(idx, n);
+        const corr = pt(a, R_CORR);
+        const door = pt(a, R_DOOR);
+
+        // heading along the ring just before reaching the room
+        const prevIdx = goClockwise ? idx - 1 : idx + 1;
+        const prevAngle = prevIdx < 0 || prevIdx >= n ? LANDING_ANGLE : roomAngle(prevIdx, n);
+        const prev = pt(prevAngle, R_CORR);
+        const heading = sub(corr, prev);
+        const doorSide = sideOf(heading, sub(door, corr));
+
+        // first turn when stepping from the core onto the ring (face the atrium, then turn)
+        const firstRoomAngle = goClockwise ? roomAngle(0, n) : roomAngle(n - 1, n);
+        const firstNode = pt(firstRoomAngle, R_CORR);
+        const arriveHeading = sub(landing, { x: CX, y: CY }); // core → landing (facing the railing)
+        const turnDir = sideOf(arriveHeading, sub(firstNode, landing));
+
+        // assemble the path of ring nodes for the map
+        const ringPath = [landing];
+        for (let s = 1; s <= (goClockwise ? cwSteps : ccwSteps); s++) {
+          const ri = goClockwise ? s - 1 : n - s;
+          ringPath.push(pt(roomAngle(ri, n), R_CORR));
+        }
+
+        const accessVerb = 'Take the stairs or elevator';
+
+        const steps = [];
+        steps.push({ t: 'Enter <b>Building 21</b> through the main entrance. The <b>staircase and elevator are right here at the entrance</b>, and the faculty secretariats are on this floor.' });
+        steps.push({ t: `${accessVerb} up to <b>${f.label}</b> (faculty offices).` });
+        steps.push({ t: `Step out onto ${f.label}, right next to the stairs/elevator. Ahead of you is the <b>open atrium with the red railing</b> — the corridor loops around it.` });
+        const passText = passCount <= 0
+          ? ''
+          : ` Continue past ${passCount} office door${passCount > 1 ? 's' : ''}.`;
+        const railingSide = doorSide === 'left' ? 'right' : 'left';
+        steps.push({
+          turn: `Turn ${turnDir}`,
+          t: `<span class="turn">Turn ${turnDir}</span> and follow the corridor around the atrium, keeping the <b>red railing</b> on your ${railingSide}.${passText}`,
+        });
+        steps.push({
+          arrive: true,
+          t: `<b>Room ${room}</b> is on your <b>${doorSide}</b>, on the outer wall.${people[room] ? ` (${people[room].en})` : ''} You've arrived.`,
+        });
+
+        return { floorNum, goClockwise, passCount, door, corr, ringPath, turnDir, doorSide, steps, n, idx };
+      }
+
+      /* ---- Schematic map rendering --------------------------------------- */
+      function renderMap(route) {
+        const svg = document.getElementById('map');
+        const NS = 'http://www.w3.org/2000/svg';
+        svg.innerHTML = '';
+        const add = (tag, attrs) => {
+          const el = document.createElementNS(NS, tag);
+          for (const k in attrs) el.setAttribute(k, attrs[k]);
+          svg.appendChild(el);
+          return el;
+        };
+        // outer diamond (building identity)
+        const d = 150;
+        add('polygon', { points: `${CX},${CY - d} ${CX + d},${CY} ${CX},${CY + d} ${CX - d},${CY}`,
+          fill: '#fff', stroke: '#d7deea', 'stroke-width': 2 });
+        // atrium (red railing)
+        add('circle', { cx: CX, cy: CY, r: 46, fill: '#fdeef2', stroke: '#7b1e3b', 'stroke-width': 2, 'stroke-dasharray': '4 4' });
+        add('text', { x: CX, y: CY + 3, 'text-anchor': 'middle', 'font-size': 9, fill: '#7b1e3b' }).textContent = 'open atrium';
+        // all room ticks
+        const f = FLOORS[route.floorNum];
+        for (let i = 0; i < f.rooms.length; i++) {
+          const a = roomAngle(i, f.rooms.length);
+          const p = pt(a, R_DOOR);
+          add('circle', { cx: p.x, cy: p.y, r: 2.4, fill: i === route.idx ? '#1f8a5b' : '#c3ccdb' });
+        }
+        // route polyline along the ring
+        const pts = route.ringPath.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+        add('polyline', { points: pts, fill: 'none', stroke: '#1e4ea8', 'stroke-width': 3, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+        // stairs / lift — at the entrance side, where you arrive on this floor
+        const land = route.ringPath[0];
+        add('rect', { x: land.x - 14, y: land.y - 2, width: 28, height: 20, rx: 4, fill: '#13294b' });
+        add('text', { x: land.x, y: land.y + 12, 'text-anchor': 'middle', 'font-size': 9, fill: '#fff', 'font-weight': 700 }).textContent = '↑';
+        add('text', { x: land.x, y: land.y + 33, 'text-anchor': 'middle', 'font-size': 9, fill: '#13294b', 'font-weight': 700 }).textContent = 'stairs / lift';
+        add('text', { x: land.x, y: land.y + 45, 'text-anchor': 'middle', 'font-size': 8, fill: '#61708c' }).textContent = '(at entrance)';
+        // destination marker
+        add('circle', { cx: route.door.x, cy: route.door.y, r: 6, fill: '#1f8a5b', stroke: '#fff', 'stroke-width': 2 });
+        add('text', { x: route.door.x, y: route.door.y - 10, 'text-anchor': 'middle', 'font-size': 9, fill: '#1f8a5b', 'font-weight': 700 })
+          .textContent = document.getElementById('dest-label').textContent;
+      }
+
+      /* ---- Floor → room picker ------------------------------------------- */
+      const floorGrid = document.getElementById('floor-grid');
+      const roomSection = document.getElementById('room-section');
+      const roomGrid = document.getElementById('room-grid');
+      const roomFilter = document.getElementById('room-filter');
+      const roomFloorTag = document.getElementById('room-floor-tag');
+      let selectedFloor = null;
+
+      function initPlanner() {
+        selectedFloor = null;
+        roomSection.style.display = 'none';
+        roomFilter.value = '';
+        floorGrid.innerHTML = Object.keys(FLOORS)
+          .sort((a, b) => Number(a) - Number(b))
+          .map((fn) => {
+            const f = FLOORS[fn];
+            return `<button class="floor-btn" data-floor="${fn}">
+              <b>${f.label}</b><span>${f.kind} · ${f.rooms.length} rooms</span></button>`;
+          })
+          .join('');
+        floorGrid.querySelectorAll('.floor-btn').forEach((b) =>
+          b.addEventListener('click', () => selectFloor(b.dataset.floor)));
+      }
+
+      function selectFloor(fn) {
+        selectedFloor = fn;
+        floorGrid.querySelectorAll('.floor-btn').forEach((b) =>
+          b.classList.toggle('active', b.dataset.floor === fn));
+        roomFloorTag.textContent = '· ' + FLOORS[fn].label;
+        roomSection.style.display = '';
+        roomFilter.value = '';
+        renderRooms('');
+        roomSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function renderRooms(filter) {
+        const f = FLOORS[selectedFloor];
+        const q = filter.trim();
+        const rooms = q ? f.rooms.filter((r) => r.includes(q)) : f.rooms;
+        roomGrid.innerHTML = rooms.length
+          ? rooms.map((r) => `<button class="room-chip" data-room="${r}">${r}</button>`).join('')
+          : `<p class="hint">No room matches “${q}”.</p>`;
+        roomGrid.querySelectorAll('.room-chip').forEach((b) =>
+          b.addEventListener('click', () => showDirections(selectedFloor, b.dataset.room)));
+      }
+
+      roomFilter.addEventListener('input', (e) => renderRooms(e.target.value));
+
+      /* ---- Screen flow --------------------------------------------------- */
+      const screens = {
+        login: document.getElementById('login-screen'),
+        planner: document.getElementById('planner-screen'),
+        directions: document.getElementById('directions-screen'),
+      };
+      function show(name) {
+        Object.values(screens).forEach((s) => s.classList.remove('active'));
+        screens[name].classList.add('active');
+        document.getElementById('logout').style.display = name === 'login' ? 'none' : '';
+        window.scrollTo(0, 0);
+      }
+
+      function showDirections(floor, room) {
+        const route = buildRoute(floor, room);
+        document.getElementById('dest-label').textContent = `Room ${room}`;
+        const total = route.steps.length;
+        document.getElementById('estimate').textContent =
+          `${total} steps · about ${1 + Math.ceil(route.passCount / 6)} min walk from the entrance`;
+        document.getElementById('steps').innerHTML = route.steps.map((s, i) => `
+          <div class="step ${s.arrive ? 'arrive' : ''}">
+            <div class="n">${s.arrive ? '✓' : i + 1}</div>
+            <p>${s.t}</p>
+          </div>`).join('');
+        renderMap(route);
+        show('directions');
+      }
+
+      /* ---- Login (kept; posts to the existing endpoint) ------------------ */
+      function collectProfile() {
+        return {
+          mode: 'login',
+          fullName: document.getElementById('f-name').value.trim(),
+          email: document.getElementById('f-email').value.trim(),
+          campusRole: document.getElementById('f-role').value,
+          consent: document.getElementById('f-consent').checked,
+          createdAt: new Date().toISOString(),
+          app: 'HUJI Campus Compass',
+        };
+      }
+      async function saveProfile(profile) {
+        try {
+          localStorage.setItem('hujiCompassProfile', JSON.stringify(profile));
+          if (!DATA_ENDPOINT) return;
+          const fd = new FormData();
+          Object.entries(profile).forEach(([k, v]) => fd.append(k, v));
+          await fetch(DATA_ENDPOINT, { method: 'POST', mode: 'no-cors', body: fd });
+        } catch (e) { /* non-blocking */ }
+      }
+
+      document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const err = document.getElementById('login-err');
+        if (!form.checkValidity()) { err.classList.add('show'); return; }
+        err.classList.remove('show');
+        await saveProfile(collectProfile());
+        show('planner');
+        initPlanner();
+      });
+
+      document.getElementById('back').addEventListener('click', () => show('planner'));
+      document.getElementById('logout').addEventListener('click', () => {
+        localStorage.removeItem('hujiCompassProfile');
+        document.getElementById('login-form').reset();
+        show('login');
+      });
+    </script>
+  </body>
+</html>
