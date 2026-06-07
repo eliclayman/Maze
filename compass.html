@@ -141,6 +141,13 @@
       .backbar button { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; }
       .backbar button:hover { border-color: var(--brand-2); }
       .hint { margin-top: 14px; font-size: .8rem; color: var(--muted); }
+      .feedback { display: flex; align-items: center; gap: 8px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--muted); }
+      .feedback button { font-size: 1.2rem; line-height: 1; padding: 6px 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+      .feedback button:hover { border-color: var(--brand-2); background: #f7f9ff; }
+      .feedback button.chosen { border-color: var(--good); background: #eafaf1; }
+      .feedback-thanks { display: none; color: var(--good); font-weight: 600; }
+      .feedback.done .feedback-thanks { display: inline; }
+      .feedback.done button:not(.chosen) { opacity: .4; }
     </style>
   </head>
   <body>
@@ -223,6 +230,12 @@
             <p class="est" id="estimate">Walking directions</p>
             <svg id="map" class="map" viewBox="0 0 400 340" role="img" aria-label="Schematic floor map"></svg>
             <div id="steps" class="steps"></div>
+            <div id="feedback" class="feedback">
+              <span>Were these directions helpful?</span>
+              <button type="button" data-helpful="yes" aria-label="Helpful">👍</button>
+              <button type="button" data-helpful="no" aria-label="Not helpful">👎</button>
+              <span id="feedback-thanks" class="feedback-thanks">Thanks — noted!</span>
+            </div>
             <p class="hint">Directions are schematic and based on the building floor plans. Found something off? Tell us — it helps us improve.</p>
           </div>
         </div>
@@ -420,6 +433,7 @@
 
       function selectFloor(fn) {
         selectedFloor = fn;
+        logEvent('floor_select', { floor: fn });
         floorGrid.querySelectorAll('.floor-btn').forEach((b) =>
           b.classList.toggle('active', b.dataset.floor === fn));
         roomFloorTag.textContent = '· ' + FLOORS[fn].label;
@@ -433,6 +447,7 @@
         const f = FLOORS[selectedFloor];
         const q = filter.trim();
         const rooms = q ? f.rooms.filter((r) => r.includes(q)) : f.rooms;
+        if (q && !rooms.length) logEvent('search_no_results', { floor: selectedFloor, query: q });
         roomGrid.innerHTML = rooms.length
           ? rooms.map((r) => `<button class="room-chip" data-room="${r}">${r}</button>`).join('')
           : `<p class="hint">No room matches “${q}”.</p>`;
@@ -455,8 +470,14 @@
         window.scrollTo(0, 0);
       }
 
+      let currentDest = { floor: '', room: '' };
       function showDirections(floor, room) {
         const route = buildRoute(floor, room);
+        currentDest = { floor, room };
+        logEvent('route_request', { floor, room });
+        const fb = document.getElementById('feedback');
+        fb.classList.remove('done');
+        fb.querySelectorAll('button').forEach((b) => b.classList.remove('chosen'));
         document.getElementById('dest-label').textContent = `Room ${room}`;
         const total = route.steps.length;
         document.getElementById('estimate').textContent =
@@ -492,6 +513,33 @@
         } catch (e) { /* non-blocking */ }
       }
 
+      /* ---- Usage logging (goes to the "Events" tab of the same Sheet) ----- */
+      function getSessionId() {
+        let id = sessionStorage.getItem('hujiCompassSession');
+        if (!id) {
+          id = 'S-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
+          sessionStorage.setItem('hujiCompassSession', id);
+        }
+        return id;
+      }
+      function logEvent(event, data = {}) {
+        try {
+          const p = JSON.parse(localStorage.getItem('hujiCompassProfile') || '{}');
+          const payload = {
+            type: 'event', event,
+            sessionId: getSessionId(),
+            email: p.email || '', role: p.campusRole || '',
+            floor: '', room: '', query: '', helpful: '', device: '', lang: '',
+            ts: new Date().toISOString(),
+            ...data,
+          };
+          if (!DATA_ENDPOINT) return;
+          const fd = new FormData();
+          Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
+          fetch(DATA_ENDPOINT, { method: 'POST', mode: 'no-cors', body: fd });
+        } catch (e) { /* non-blocking */ }
+      }
+
       document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const form = e.target;
@@ -499,9 +547,23 @@
         if (!form.checkValidity()) { err.classList.add('show'); return; }
         err.classList.remove('show');
         await saveProfile(collectProfile());
+        logEvent('session_start', {
+          device: window.matchMedia('(max-width: 780px)').matches ? 'mobile' : 'desktop',
+          lang: navigator.language || '',
+        });
         show('planner');
         initPlanner();
       });
+
+      // Directions feedback (👍 / 👎)
+      document.querySelectorAll('#feedback button').forEach((b) =>
+        b.addEventListener('click', () => {
+          const fb = document.getElementById('feedback');
+          if (fb.classList.contains('done')) return;
+          b.classList.add('chosen');
+          fb.classList.add('done');
+          logEvent('feedback', { floor: currentDest.floor, room: currentDest.room, helpful: b.dataset.helpful });
+        }));
 
       document.getElementById('back').addEventListener('click', () => show('planner'));
       document.getElementById('logout').addEventListener('click', () => {
