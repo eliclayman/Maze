@@ -1,0 +1,50 @@
+[
+  {
+    "id": "b201-f1-atrium-core",
+    "buildingId": "b201",
+    "floor": 1,
+    "name": "Atrium Core",
+    "description": "Central atrium, lobby, and main circulation zone.",
+    "nearLandmarkIds": ["b201-main-entrance", "b201-atrium", "b201-lobby", "b201-elevator-core"]
+  },
+  {
+    "id": "b201-f1-east-wing",
+    "buildingId": "b201",
+    "floor": 1,
+    "name": "East Wing",
+    "description": "Primary east-side room corridor on floor 1.",
+    "nearLandmarkIds": ["b201-atrium", "b201-main-entrance"]
+  },
+  {
+    "id": "b201-f1-west-wing",
+    "buildingId": "b201",
+    "floor": 1,
+    "name": "West Wing",
+    "description": "Primary west-side room corridor on floor 1.",
+    "nearLandmarkIds": ["b201-lobby", "b201-cafeteria-area", "b201-stairs-north"]
+  },
+  {
+    "id": "b201-f2-central-corridor",
+    "buildingId": "b201",
+    "floor": 2,
+    "name": "Central Corridor",
+    "description": "Main floor 2 corridor outside the elevator core.",
+    "nearLandmarkIds": ["b201-elevator-core"]
+  },
+  {
+    "id": "b201-f2-east-wing",
+    "buildingId": "b201",
+    "floor": 2,
+    "name": "East Wing",
+    "description": "Primary east-side room cluster on floor 2.",
+    "nearLandmarkIds": ["b201-library-entrance"]
+  },
+  {
+    "id": "b201-f2-west-wing",
+    "buildingId": "b201",
+    "floor": 2,
+    "name": "West Wing",
+    "description": "Primary west-side room cluster on floor 2.",
+    "nearLandmarkIds": ["b201-elevator-core", "b201-stairs-north"]
+  }
+]

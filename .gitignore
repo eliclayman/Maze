@@ -7,3 +7,6 @@ dist/
 !.env.example
 media/teva-route.mp4
 media/teva-route-web.mp4
+
+# raw building data — kept out of the public repo (plans + walkthrough video)
+data/

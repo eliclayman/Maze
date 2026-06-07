@@ -1,0 +1,156 @@
+[
+  {
+    "id": "b201-video-main-entrance-to-f1-east-wing",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from Main Entrance to Floor 1 East Wing",
+    "path": "/media/videos/routes/b201/main-entrance/f1-east-wing/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/main-entrance/f1-east-wing/thumbnail.jpg",
+    "durationSeconds": 35,
+    "zoneId": "b201-f1-east-wing",
+    "isSample": true
+  },
+  {
+    "id": "b201-video-atrium-to-f1-east-wing",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from Atrium to Floor 1 East Wing",
+    "path": "/media/videos/routes/b201/atrium/f1-east-wing/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/atrium/f1-east-wing/thumbnail.jpg",
+    "durationSeconds": 32,
+    "zoneId": "b201-f1-east-wing",
+    "isSample": true
+  },
+  {
+    "id": "b201-video-lobby-to-f1-west-wing",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from Lobby to Floor 1 West Wing",
+    "path": "/media/videos/routes/b201/lobby/f1-west-wing/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/lobby/f1-west-wing/thumbnail.jpg",
+    "durationSeconds": 38,
+    "zoneId": "b201-f1-west-wing",
+    "isSample": true
+  },
+  {
+    "id": "b201-video-cafeteria-to-f1-west-wing",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from Cafeteria Area to Floor 1 West Wing",
+    "path": "/media/videos/routes/b201/cafeteria-area/f1-west-wing/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/cafeteria-area/f1-west-wing/thumbnail.jpg",
+    "durationSeconds": 28,
+    "zoneId": "b201-f1-west-wing",
+    "isSample": true
+  },
+  {
+    "id": "b201-video-elevator-to-f2-central-corridor",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from Elevators to Floor 2 Central Corridor",
+    "path": "/media/videos/routes/b201/elevator-core/f2-central-corridor/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/elevator-core/f2-central-corridor/thumbnail.jpg",
+    "durationSeconds": 24,
+    "zoneId": "b201-f2-central-corridor",
+    "isSample": true
+  },
+  {
+    "id": "b201-video-stairs-north-to-f2-east-wing",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from North Stairs to Floor 2 East Wing",
+    "path": "/media/videos/routes/b201/stairs-north/f2-east-wing/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/stairs-north/f2-east-wing/thumbnail.jpg",
+    "durationSeconds": 41,
+    "zoneId": "b201-f2-east-wing",
+    "isSample": true
+  },
+  {
+    "id": "b201-video-atrium-to-f2-west-wing",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from Atrium to Floor 2 West Wing",
+    "path": "/media/videos/routes/b201/atrium/f2-west-wing/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/atrium/f2-west-wing/thumbnail.jpg",
+    "durationSeconds": 49,
+    "zoneId": "b201-f2-west-wing",
+    "isSample": true
+  },
+  {
+    "id": "b201-video-lobby-to-f2-west-wing",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from Lobby to Floor 2 West Wing",
+    "path": "/media/videos/routes/b201/lobby/f2-west-wing/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/lobby/f2-west-wing/thumbnail.jpg",
+    "durationSeconds": 46,
+    "zoneId": "b201-f2-west-wing",
+    "isSample": true
+  },
+  {
+    "id": "b201-video-elevator-to-f2-west-wing",
+    "buildingId": "b201",
+    "type": "video",
+    "title": "Sample walkthrough from Elevators to Floor 2 West Wing",
+    "path": "/media/videos/routes/b201/elevator-core/f2-west-wing/walkthrough.mp4",
+    "thumbnailPath": "/media/videos/routes/b201/elevator-core/f2-west-wing/thumbnail.jpg",
+    "durationSeconds": 29,
+    "zoneId": "b201-f2-west-wing",
+    "isSample": true
+  },
+  {
+    "id": "b201-blueprint-f1-east-wing",
+    "buildingId": "b201",
+    "type": "blueprint-image",
+    "title": "Sample blueprint crop for Floor 1 East Wing",
+    "path": "/media/blueprints/crops/b201/floor-1/east-wing.png",
+    "floor": 1,
+    "zoneId": "b201-f1-east-wing",
+    "alt": "Sample reference blueprint crop for the floor 1 east wing.",
+    "isSample": true
+  },
+  {
+    "id": "b201-blueprint-f1-west-wing",
+    "buildingId": "b201",
+    "type": "blueprint-image",
+    "title": "Sample blueprint crop for Floor 1 West Wing",
+    "path": "/media/blueprints/crops/b201/floor-1/west-wing.png",
+    "floor": 1,
+    "zoneId": "b201-f1-west-wing",
+    "alt": "Sample reference blueprint crop for the floor 1 west wing.",
+    "isSample": true
+  },
+  {
+    "id": "b201-blueprint-f2-central-corridor",
+    "buildingId": "b201",
+    "type": "blueprint-image",
+    "title": "Sample blueprint crop for Floor 2 Central Corridor",
+    "path": "/media/blueprints/crops/b201/floor-2/central-corridor.png",
+    "floor": 2,
+    "zoneId": "b201-f2-central-corridor",
+    "alt": "Sample reference blueprint crop for the floor 2 central corridor.",
+    "isSample": true
+  },
+  {
+    "id": "b201-blueprint-f2-east-wing",
+    "buildingId": "b201",
+    "type": "blueprint-image",
+    "title": "Sample blueprint crop for Floor 2 East Wing",
+    "path": "/media/blueprints/crops/b201/floor-2/east-wing.png",
+    "floor": 2,
+    "zoneId": "b201-f2-east-wing",
+    "alt": "Sample reference blueprint crop for the floor 2 east wing.",
+    "isSample": true
+  },
+  {
+    "id": "b201-blueprint-f2-west-wing",
+    "buildingId": "b201",
+    "type": "blueprint-image",
+    "title": "Sample blueprint crop for Floor 2 West Wing",
+    "path": "/media/blueprints/crops/b201/floor-2/west-wing.png",
+    "floor": 2,
+    "zoneId": "b201-f2-west-wing",
+    "alt": "Sample reference blueprint crop for the floor 2 west wing.",
+    "isSample": true
+  }
+]

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "b201-main-entrance",
+    "buildingId": "b201",
+    "name": "Main Entrance",
+    "floor": 1,
+    "type": "entrance",
+    "userSelectable": true,
+    "zoneId": "b201-f1-atrium-core",
+    "description": "Primary public entrance to Building 201."
+  },
+  {
+    "id": "b201-atrium",
+    "buildingId": "b201",
+    "name": "Atrium",
+    "floor": 1,
+    "type": "orientation",
+    "userSelectable": true,
+    "zoneId": "b201-f1-atrium-core",
+    "description": "Central open space used as a strong orientation landmark."
+  },
+  {
+    "id": "b201-lobby",
+    "buildingId": "b201",
+    "name": "Lobby",
+    "floor": 1,
+    "type": "orientation",
+    "userSelectable": true,
+    "zoneId": "b201-f1-atrium-core",
+    "description": "Lobby area near the building entrance and reception."
+  },
+  {
+    "id": "b201-elevator-core",
+    "buildingId": "b201",
+    "name": "Main Elevators",
+    "floor": 1,
+    "type": "vertical",
+    "userSelectable": true,
+    "zoneId": "b201-f1-atrium-core",
+    "description": "Main elevator bank beside the atrium core."
+  },
+  {
+    "id": "b201-stairs-north",
+    "buildingId": "b201",
+    "name": "North Stairs",
+    "floor": 1,
+    "type": "vertical",
+    "userSelectable": true,
+    "zoneId": "b201-f1-west-wing",
+    "description": "North-side staircase for floor changes."
+  },
+  {
+    "id": "b201-library-entrance",
+    "buildingId": "b201",
+    "name": "Library Entrance",
+    "floor": 2,
+    "type": "service",
+    "userSelectable": true,
+    "zoneId": "b201-f2-east-wing",
+    "description": "Entrance area outside the library."
+  },
+  {
+    "id": "b201-cafeteria-area",
+    "buildingId": "b201",
+    "name": "Cafeteria Area",
+    "floor": 1,
+    "type": "service",
+    "userSelectable": true,
+    "zoneId": "b201-f1-west-wing",
+    "description": "Common student area near the cafeteria."
+  }
+]

@@ -1,0 +1,204 @@
+[
+  {
+    "id": "b201-route-main-entrance-to-sample-101",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-main-entrance",
+    "destinationRoomId": "b201-room-sample-101",
+    "targetFloor": 1,
+    "routeType": "default",
+    "estimatedWalkMinutes": 2,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "Enter through the main entrance into the atrium." },
+      { "order": 2, "text": "Continue toward the east corridor." },
+      { "order": 3, "text": "Walk straight until Sample Room 101 appears on your right." }
+    ],
+    "media": {
+      "videoId": "b201-video-main-entrance-to-f1-east-wing",
+      "blueprintImageId": "b201-blueprint-f1-east-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-atrium-to-sample-103",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-atrium",
+    "destinationRoomId": "b201-room-sample-103",
+    "targetFloor": 1,
+    "routeType": "default",
+    "estimatedWalkMinutes": 2,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "Start in the atrium facing the east side corridor." },
+      { "order": 2, "text": "Walk into the east wing." },
+      { "order": 3, "text": "Continue past the first few doors until you reach Sample Room 103." }
+    ],
+    "media": {
+      "videoId": "b201-video-atrium-to-f1-east-wing",
+      "blueprintImageId": "b201-blueprint-f1-east-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-lobby-to-sample-110",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-lobby",
+    "destinationRoomId": "b201-room-sample-110",
+    "targetFloor": 1,
+    "routeType": "default",
+    "estimatedWalkMinutes": 3,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "Stand in the lobby facing away from reception." },
+      { "order": 2, "text": "Turn into the west corridor." },
+      { "order": 3, "text": "Continue along the hallway until you reach Sample Room 110 on the left." }
+    ],
+    "media": {
+      "videoId": "b201-video-lobby-to-f1-west-wing",
+      "blueprintImageId": "b201-blueprint-f1-west-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-cafeteria-to-sample-112",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-cafeteria-area",
+    "destinationRoomId": "b201-room-sample-112",
+    "targetFloor": 1,
+    "routeType": "default",
+    "estimatedWalkMinutes": 2,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "Leave the cafeteria area and enter the nearby west-side corridor." },
+      { "order": 2, "text": "Continue straight past the room cluster." },
+      { "order": 3, "text": "Sample Room 112 will be ahead on the right." }
+    ],
+    "media": {
+      "videoId": "b201-video-cafeteria-to-f1-west-wing",
+      "blueprintImageId": "b201-blueprint-f1-west-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-elevator-core-to-sample-201",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-elevator-core",
+    "destinationRoomId": "b201-room-sample-201",
+    "targetFloor": 2,
+    "routeType": "default",
+    "estimatedWalkMinutes": 2,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "Take the elevator to floor 2." },
+      { "order": 2, "text": "Exit into the central corridor." },
+      { "order": 3, "text": "Walk a short distance forward to Sample Room 201." }
+    ],
+    "media": {
+      "videoId": "b201-video-elevator-to-f2-central-corridor",
+      "blueprintImageId": "b201-blueprint-f2-central-corridor"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-stairs-north-to-sample-203",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-stairs-north",
+    "destinationRoomId": "b201-room-sample-203",
+    "targetFloor": 2,
+    "routeType": "stairs",
+    "estimatedWalkMinutes": 3,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "Take the north staircase to floor 2." },
+      { "order": 2, "text": "Exit the staircase and turn toward the east wing corridor." },
+      { "order": 3, "text": "Continue until Sample Room 203 appears on the left." }
+    ],
+    "media": {
+      "videoId": "b201-video-stairs-north-to-f2-east-wing",
+      "blueprintImageId": "b201-blueprint-f2-east-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-library-entrance-to-sample-203",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-library-entrance",
+    "destinationRoomId": "b201-room-sample-203",
+    "targetFloor": 2,
+    "routeType": "default",
+    "estimatedWalkMinutes": 1,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "Start at the library entrance facing down the corridor." },
+      { "order": 2, "text": "Walk straight through the east wing hallway." },
+      { "order": 3, "text": "Sample Room 203 will be nearby on your right." }
+    ],
+    "media": {
+      "videoId": null,
+      "blueprintImageId": "b201-blueprint-f2-east-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-atrium-to-sample-210",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-atrium",
+    "destinationRoomId": "b201-room-sample-210",
+    "targetFloor": 2,
+    "routeType": "default",
+    "estimatedWalkMinutes": 4,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "From the atrium, go to the elevator core." },
+      { "order": 2, "text": "Take the elevator to floor 2." },
+      { "order": 3, "text": "Turn into the west corridor after exiting." },
+      { "order": 4, "text": "Continue until you reach Sample Room 210." }
+    ],
+    "media": {
+      "videoId": "b201-video-atrium-to-f2-west-wing",
+      "blueprintImageId": "b201-blueprint-f2-west-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-lobby-to-sample-214",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-lobby",
+    "destinationRoomId": "b201-room-sample-214",
+    "targetFloor": 2,
+    "routeType": "default",
+    "estimatedWalkMinutes": 4,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "From the lobby, walk to the elevator area." },
+      { "order": 2, "text": "Go up to floor 2." },
+      { "order": 3, "text": "Turn into the west-side hallway." },
+      { "order": 4, "text": "Continue past the room cluster until Sample Room 214 appears on the left." }
+    ],
+    "media": {
+      "videoId": "b201-video-lobby-to-f2-west-wing",
+      "blueprintImageId": "b201-blueprint-f2-west-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  },
+  {
+    "id": "b201-route-elevator-core-to-sample-214",
+    "buildingId": "b201",
+    "startLandmarkId": "b201-elevator-core",
+    "destinationRoomId": "b201-room-sample-214",
+    "targetFloor": 2,
+    "routeType": "default",
+    "estimatedWalkMinutes": 2,
+    "isSample": true,
+    "steps": [
+      { "order": 1, "text": "Take the elevator to floor 2." },
+      { "order": 2, "text": "Exit and turn toward the west corridor." },
+      { "order": 3, "text": "Walk straight until you arrive at Sample Room 214." }
+    ],
+    "media": {
+      "videoId": "b201-video-elevator-to-f2-west-wing",
+      "blueprintImageId": "b201-blueprint-f2-west-wing"
+    },
+    "notes": "Mock/sample route pending verification."
+  }
+]

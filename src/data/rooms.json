@@ -1,0 +1,90 @@
+[
+  {
+    "id": "b201-room-sample-101",
+    "buildingId": "b201",
+    "roomNumber": "101",
+    "name": "Sample Room 101",
+    "floor": 1,
+    "zoneId": "b201-f1-east-wing",
+    "aliases": ["101", "Room 101"],
+    "isSample": true,
+    "notes": "Mock/sample room record pending verification."
+  },
+  {
+    "id": "b201-room-sample-103",
+    "buildingId": "b201",
+    "roomNumber": "103",
+    "name": "Sample Room 103",
+    "floor": 1,
+    "zoneId": "b201-f1-east-wing",
+    "aliases": ["103", "Room 103"],
+    "isSample": true,
+    "notes": "Mock/sample room record pending verification."
+  },
+  {
+    "id": "b201-room-sample-110",
+    "buildingId": "b201",
+    "roomNumber": "110",
+    "name": "Sample Room 110",
+    "floor": 1,
+    "zoneId": "b201-f1-west-wing",
+    "aliases": ["110", "Room 110"],
+    "isSample": true,
+    "notes": "Mock/sample room record pending verification."
+  },
+  {
+    "id": "b201-room-sample-112",
+    "buildingId": "b201",
+    "roomNumber": "112",
+    "name": "Sample Room 112",
+    "floor": 1,
+    "zoneId": "b201-f1-west-wing",
+    "aliases": ["112", "Room 112"],
+    "isSample": true,
+    "notes": "Mock/sample room record pending verification."
+  },
+  {
+    "id": "b201-room-sample-201",
+    "buildingId": "b201",
+    "roomNumber": "201",
+    "name": "Sample Room 201",
+    "floor": 2,
+    "zoneId": "b201-f2-central-corridor",
+    "aliases": ["201", "Room 201"],
+    "isSample": true,
+    "notes": "Mock/sample room record pending verification."
+  },
+  {
+    "id": "b201-room-sample-203",
+    "buildingId": "b201",
+    "roomNumber": "203",
+    "name": "Sample Room 203",
+    "floor": 2,
+    "zoneId": "b201-f2-east-wing",
+    "aliases": ["203", "Room 203"],
+    "isSample": true,
+    "notes": "Mock/sample room record pending verification."
+  },
+  {
+    "id": "b201-room-sample-210",
+    "buildingId": "b201",
+    "roomNumber": "210",
+    "name": "Sample Room 210",
+    "floor": 2,
+    "zoneId": "b201-f2-west-wing",
+    "aliases": ["210", "Room 210"],
+    "isSample": true,
+    "notes": "Mock/sample room record pending verification."
+  },
+  {
+    "id": "b201-room-sample-214",
+    "buildingId": "b201",
+    "roomNumber": "214",
+    "name": "Sample Room 214",
+    "floor": 2,
+    "zoneId": "b201-f2-west-wing",
+    "aliases": ["214", "Room 214"],
+    "isSample": true,
+    "notes": "Mock/sample room record pending verification."
+  }
+]

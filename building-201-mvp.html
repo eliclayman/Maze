@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Maze | Building 201 MVP</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f7fb;
+        --bg-soft: #f8fbff;
+        --card: #ffffff;
+        --card-soft: #f8fafc;
+        --border: #dbe3ee;
+        --text: #0f172a;
+        --muted: #64748b;
+        --brand: #183a6b;
+        --brand-soft: rgba(24, 58, 107, 0.06);
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        --radius-xl: 24px;
+        --radius-lg: 18px;
+        --radius-md: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
+        color: var(--text);
+      }
+
+      .app {
+        width: min(1040px, calc(100% - 24px));
+        margin: 0 auto;
+        padding-bottom: 32px;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(16px);
+      }
+
+      .topbar-inner {
+        width: min(1040px, calc(100% - 24px));
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 0;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-mark {
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        background: var(--brand);
+        color: white;
+        font-size: 0.95rem;
+        font-weight: 800;
+      }
+
+      .brand-title {
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+
+      .brand-subtitle {
+        margin-top: 2px;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .badge {
+        border: 1px solid rgba(24, 58, 107, 0.12);
+        background: var(--brand-soft);
+        color: var(--brand);
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow);
+      }
+
+      .card-pad {
+        padding: 20px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+
+      h1, h2, h3, h4, p {
+        margin: 0;
+      }
+
+      h1 {
+        margin-top: 8px;
+        font-size: clamp(1.55rem, 4vw, 1.9rem);
+        line-height: 1.1;
+        letter-spacing: -0.04em;
+      }
+
+      .subtitle {
+        margin-top: 10px;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+      }
+
+      .label-title {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #334155;
+      }
+
+      input,
+      select,
+      button {
+        font: inherit;
+      }
+
+      input,
+      select {
+        width: 100%;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        background: white;
+        color: var(--text);
+        padding: 14px 15px;
+        outline: none;
+      }
+
+      input::placeholder {
+        color: #94a3b8;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 4px rgba(24, 58, 107, 0.1);
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .chip {
+        border: 1px solid var(--border);
+        background: #f8fafc;
+        color: #334155;
+        border-radius: 999px;
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+
+      .chip:hover {
+        border-color: rgba(24, 58, 107, 0.25);
+        background: var(--brand-soft);
+        color: var(--brand);
+      }
+
+      .button {
+        border: 0;
+        border-radius: 999px;
+        background: var(--brand);
+        color: white;
+        padding: 14px 18px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .helper {
+        font-size: 0.76rem;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+
+      .reference-box {
+        margin-top: 16px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card-soft);
+        padding: 14px;
+      }
+
+      .reference-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .reference-pill {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: white;
+        padding: 12px 8px;
+        text-align: center;
+        font-size: 0.76rem;
+        color: #475569;
+      }
+
+      .reference-pill.brand {
+        background: var(--brand-soft);
+        border-color: rgba(24, 58, 107, 0.12);
+        color: var(--brand);
+      }
+
+      .reference-placeholder {
+        grid-column: 1 / -1;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        background: white;
+        padding: 20px 10px;
+        text-align: center;
+        font-size: 0.76rem;
+        color: var(--muted);
+      }
+
+      .reference-list {
+        margin-top: 14px;
+        display: grid;
+        gap: 8px;
+        font-size: 0.92rem;
+        color: #475569;
+      }
+
+      .empty {
+        border-style: dashed;
+        color: var(--muted);
+      }
+
+      .summary {
+        display: grid;
+        gap: 18px;
+      }
+
+      .summary-meta {
+        display: grid;
+        gap: 10px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--card-soft);
+        padding: 16px;
+        color: #475569;
+      }
+
+      .meta-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .meta-row strong {
+        color: var(--text);
+      }
+
+      .section-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+
+      .room-title {
+        margin-top: 8px;
+        font-size: 1.6rem;
+        letter-spacing: -0.04em;
+      }
+
+      .route-copy {
+        margin-top: 10px;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .demo-note {
+        margin-top: 10px;
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #64748b;
+      }
+
+      .steps {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .step {
+        display: flex;
+        gap: 12px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--card-soft);
+        padding: 14px;
+      }
+
+      .step-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        background: var(--brand);
+        color: white;
+        font-size: 0.78rem;
+        font-weight: 800;
+        flex-shrink: 0;
+      }
+
+      .step p {
+        padding-top: 2px;
+        font-size: 0.93rem;
+        line-height: 1.65;
+        color: #334155;
+      }
+
+      .media-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .media-card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--card-soft);
+        padding: 14px;
+      }
+
+      .mini-title {
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #64748b;
+      }
+
+      .media-card h4 {
+        margin-top: 8px;
+        font-size: 1rem;
+      }
+
+      .media-card p {
+        margin-top: 8px;
+        font-size: 0.92rem;
+        line-height: 1.65;
+        color: var(--muted);
+      }
+
+      @media (min-width: 920px) {
+        .planner-layout {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 320px;
+          gap: 16px;
+          align-items: start;
+        }
+
+        .summary {
+          grid-template-columns: minmax(0, 1fr) 220px;
+          align-items: start;
+        }
+
+        .media-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-mark">M</div>
+          <div>
+            <div class="brand-title">Maze</div>
+            <div class="brand-subtitle">Hebrew University Building 201</div>
+          </div>
+        </div>
+        <div class="badge">No GPS</div>
+      </div>
+    </header>
+
+    <div class="app">
+      <main class="grid">
+        <div class="planner-layout">
+          <section class="card card-pad">
+            <p class="eyebrow">Wayfinding assistant</p>
+            <h1>Find a room in Building 201</h1>
+            <p class="subtitle">
+              A curated wayfinding assistant for Mount Scopus based on fixed landmarks and static demo directions.
+            </p>
+
+            <form id="route-form" class="form-grid">
+              <label>
+                <span class="label-title">Starting point</span>
+                <select id="landmark-select"></select>
+              </label>
+
+              <label>
+                <span class="label-title">Destination room</span>
+                <input id="room-query" placeholder="Enter a room number, for example 201" />
+              </label>
+
+              <label>
+                <span class="label-title">Or choose a demo room</span>
+                <select id="room-select"></select>
+              </label>
+
+              <div>
+                <p class="label-title" style="font-size:0.8rem; color:#64748b;">Suggested destinations</p>
+                <div class="chip-row" id="room-chips"></div>
+              </div>
+
+              <button class="button" type="submit">Get Directions</button>
+
+              <p class="helper">
+                Static demo data only. Real Building 201 rooms and routes will replace these placeholders later.
+              </p>
+            </form>
+          </section>
+
+          <section class="card card-pad">
+            <p class="eyebrow">Building reference</p>
+            <h2 style="margin-top:8px; font-size:1rem;">Building 201, Mount Scopus</h2>
+
+            <div class="reference-box">
+              <div class="reference-grid">
+                <div class="reference-pill brand">Atrium</div>
+                <div class="reference-pill">Elevators</div>
+                <div class="reference-pill">Wings</div>
+                <div class="reference-placeholder">Floor reference placeholder</div>
+              </div>
+            </div>
+
+            <div class="reference-list">
+              <div>Static directions based on verified landmarks</div>
+              <div>No GPS or live tracking</div>
+            </div>
+          </section>
+        </div>
+
+        <section id="results" class="card card-pad empty">
+          Choose a starting point and destination to generate directions.
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const landmarks = [
+        { id: 'b201-main-entrance', name: 'Main Entrance', userSelectable: true },
+        { id: 'b201-atrium', name: 'Atrium', userSelectable: true },
+        { id: 'b201-lobby', name: 'Lobby', userSelectable: true },
+        { id: 'b201-elevator-core', name: 'Main Elevators', userSelectable: true },
+        { id: 'b201-stairs-north', name: 'North Stairs', userSelectable: true },
+        { id: 'b201-library-entrance', name: 'Library Entrance', userSelectable: true },
+        { id: 'b201-cafeteria-area', name: 'Cafeteria Area', userSelectable: true }
+      ];
+
+      const zones = [
+        { id: 'b201-f1-east-wing', name: 'East Wing' },
+        { id: 'b201-f1-west-wing', name: 'West Wing' },
+        { id: 'b201-f2-central-corridor', name: 'Central Corridor' },
+        { id: 'b201-f2-east-wing', name: 'East Wing' },
+        { id: 'b201-f2-west-wing', name: 'West Wing' }
+      ];
+
+      const rooms = [
+        { id: 'b201-room-sample-101', roomNumber: '101', name: 'Demo Room 101', floor: 1, zoneId: 'b201-f1-east-wing', aliases: ['101', 'Room 101'] },
+        { id: 'b201-room-sample-103', roomNumber: '103', name: 'Demo Room 103', floor: 1, zoneId: 'b201-f1-east-wing', aliases: ['103', 'Room 103'] },
+        { id: 'b201-room-sample-110', roomNumber: '110', name: 'Demo Room 110', floor: 1, zoneId: 'b201-f1-west-wing', aliases: ['110', 'Room 110'] },
+        { id: 'b201-room-sample-112', roomNumber: '112', name: 'Demo Room 112', floor: 1, zoneId: 'b201-f1-west-wing', aliases: ['112', 'Room 112'] },
+        { id: 'b201-room-sample-201', roomNumber: '201', name: 'Demo Room 201', floor: 2, zoneId: 'b201-f2-central-corridor', aliases: ['201', 'Room 201'] },
+        { id: 'b201-room-sample-203', roomNumber: '203', name: 'Demo Room 203', floor: 2, zoneId: 'b201-f2-east-wing', aliases: ['203', 'Room 203'] },
+        { id: 'b201-room-sample-210', roomNumber: '210', name: 'Demo Room 210', floor: 2, zoneId: 'b201-f2-west-wing', aliases: ['210', 'Room 210'] },
+        { id: 'b201-room-sample-214', roomNumber: '214', name: 'Demo Room 214', floor: 2, zoneId: 'b201-f2-west-wing', aliases: ['214', 'Room 214'] }
+      ];
+
+      const mediaAssets = [
+        { id: 'b201-video-main-entrance-to-f1-east-wing', type: 'video', title: 'Demo walkthrough from Main Entrance to Floor 1 East Wing', path: '/media/videos/routes/b201/main-entrance/f1-east-wing/walkthrough.mp4' },
+        { id: 'b201-video-atrium-to-f1-east-wing', type: 'video', title: 'Demo walkthrough from Atrium to Floor 1 East Wing', path: '/media/videos/routes/b201/atrium/f1-east-wing/walkthrough.mp4' },
+        { id: 'b201-video-lobby-to-f1-west-wing', type: 'video', title: 'Demo walkthrough from Lobby to Floor 1 West Wing', path: '/media/videos/routes/b201/lobby/f1-west-wing/walkthrough.mp4' },
+        { id: 'b201-video-cafeteria-to-f1-west-wing', type: 'video', title: 'Demo walkthrough from Cafeteria Area to Floor 1 West Wing', path: '/media/videos/routes/b201/cafeteria-area/f1-west-wing/walkthrough.mp4' },
+        { id: 'b201-video-elevator-to-f2-central-corridor', type: 'video', title: 'Demo walkthrough from Elevators to Floor 2 Central Corridor', path: '/media/videos/routes/b201/elevator-core/f2-central-corridor/walkthrough.mp4' },
+        { id: 'b201-video-stairs-north-to-f2-east-wing', type: 'video', title: 'Demo walkthrough from North Stairs to Floor 2 East Wing', path: '/media/videos/routes/b201/stairs-north/f2-east-wing/walkthrough.mp4' },
+        { id: 'b201-video-atrium-to-f2-west-wing', type: 'video', title: 'Demo walkthrough from Atrium to Floor 2 West Wing', path: '/media/videos/routes/b201/atrium/f2-west-wing/walkthrough.mp4' },
+        { id: 'b201-video-lobby-to-f2-west-wing', type: 'video', title: 'Demo walkthrough from Lobby to Floor 2 West Wing', path: '/media/videos/routes/b201/lobby/f2-west-wing/walkthrough.mp4' },
+        { id: 'b201-video-elevator-to-f2-west-wing', type: 'video', title: 'Demo walkthrough from Elevators to Floor 2 West Wing', path: '/media/videos/routes/b201/elevator-core/f2-west-wing/walkthrough.mp4' },
+        { id: 'b201-blueprint-f1-east-wing', type: 'blueprint-image', title: 'Demo blueprint crop for Floor 1 East Wing', path: '/media/blueprints/crops/b201/floor-1/east-wing.png' },
+        { id: 'b201-blueprint-f1-west-wing', type: 'blueprint-image', title: 'Demo blueprint crop for Floor 1 West Wing', path: '/media/blueprints/crops/b201/floor-1/west-wing.png' },
+        { id: 'b201-blueprint-f2-central-corridor', type: 'blueprint-image', title: 'Demo blueprint crop for Floor 2 Central Corridor', path: '/media/blueprints/crops/b201/floor-2/central-corridor.png' },
+        { id: 'b201-blueprint-f2-east-wing', type: 'blueprint-image', title: 'Demo blueprint crop for Floor 2 East Wing', path: '/media/blueprints/crops/b201/floor-2/east-wing.png' },
+        { id: 'b201-blueprint-f2-west-wing', type: 'blueprint-image', title: 'Demo blueprint crop for Floor 2 West Wing', path: '/media/blueprints/crops/b201/floor-2/west-wing.png' }
+      ];
+
+      const routes = [
+        {
+          id: 'b201-route-main-entrance-to-sample-101',
+          startLandmarkId: 'b201-main-entrance',
+          destinationRoomId: 'b201-room-sample-101',
+          targetFloor: 1,
+          routeType: 'default',
+          estimatedWalkMinutes: 2,
+          steps: [
+            { order: 1, text: 'Enter through the main entrance into the atrium.' },
+            { order: 2, text: 'Continue toward the east corridor.' },
+            { order: 3, text: 'Walk straight until Room 101 appears on your right.' }
+          ],
+          media: { videoId: 'b201-video-main-entrance-to-f1-east-wing', blueprintImageId: 'b201-blueprint-f1-east-wing' }
+        },
+        {
+          id: 'b201-route-atrium-to-sample-103',
+          startLandmarkId: 'b201-atrium',
+          destinationRoomId: 'b201-room-sample-103',
+          targetFloor: 1,
+          routeType: 'default',
+          estimatedWalkMinutes: 2,
+          steps: [
+            { order: 1, text: 'Start in the atrium facing the east side corridor.' },
+            { order: 2, text: 'Walk into the east wing.' },
+            { order: 3, text: 'Continue past the first few doors until you reach Room 103.' }
+          ],
+          media: { videoId: 'b201-video-atrium-to-f1-east-wing', blueprintImageId: 'b201-blueprint-f1-east-wing' }
+        },
+        {
+          id: 'b201-route-lobby-to-sample-110',
+          startLandmarkId: 'b201-lobby',
+          destinationRoomId: 'b201-room-sample-110',
+          targetFloor: 1,
+          routeType: 'default',
+          estimatedWalkMinutes: 3,
+          steps: [
+            { order: 1, text: 'Stand in the lobby facing away from reception.' },
+            { order: 2, text: 'Turn into the west corridor.' },
+            { order: 3, text: 'Continue along the hallway until you reach Room 110 on the left.' }
+          ],
+          media: { videoId: 'b201-video-lobby-to-f1-west-wing', blueprintImageId: 'b201-blueprint-f1-west-wing' }
+        },
+        {
+          id: 'b201-route-cafeteria-to-sample-112',
+          startLandmarkId: 'b201-cafeteria-area',
+          destinationRoomId: 'b201-room-sample-112',
+          targetFloor: 1,
+          routeType: 'default',
+          estimatedWalkMinutes: 2,
+          steps: [
+            { order: 1, text: 'Leave the cafeteria area and enter the nearby west-side corridor.' },
+            { order: 2, text: 'Continue straight past the room cluster.' },
+            { order: 3, text: 'Room 112 will be ahead on the right.' }
+          ],
+          media: { videoId: 'b201-video-cafeteria-to-f1-west-wing', blueprintImageId: 'b201-blueprint-f1-west-wing' }
+        },
+        {
+          id: 'b201-route-elevator-core-to-sample-201',
+          startLandmarkId: 'b201-elevator-core',
+          destinationRoomId: 'b201-room-sample-201',
+          targetFloor: 2,
+          routeType: 'default',
+          estimatedWalkMinutes: 2,
+          steps: [
+            { order: 1, text: 'Take the elevator to floor 2.' },
+            { order: 2, text: 'Exit into the central corridor.' },
+            { order: 3, text: 'Walk a short distance forward to Room 201.' }
+          ],
+          media: { videoId: 'b201-video-elevator-to-f2-central-corridor', blueprintImageId: 'b201-blueprint-f2-central-corridor' }
+        },
+        {
+          id: 'b201-route-stairs-north-to-sample-203',
+          startLandmarkId: 'b201-stairs-north',
+          destinationRoomId: 'b201-room-sample-203',
+          targetFloor: 2,
+          routeType: 'stairs',
+          estimatedWalkMinutes: 3,
+          steps: [
+            { order: 1, text: 'Take the north staircase to floor 2.' },
+            { order: 2, text: 'Exit the staircase and turn toward the east wing corridor.' },
+            { order: 3, text: 'Continue until Room 203 appears on the left.' }
+          ],
+          media: { videoId: 'b201-video-stairs-north-to-f2-east-wing', blueprintImageId: 'b201-blueprint-f2-east-wing' }
+        },
+        {
+          id: 'b201-route-library-entrance-to-sample-203',
+          startLandmarkId: 'b201-library-entrance',
+          destinationRoomId: 'b201-room-sample-203',
+          targetFloor: 2,
+          routeType: 'default',
+          estimatedWalkMinutes: 1,
+          steps: [
+            { order: 1, text: 'Start at the library entrance facing down the corridor.' },
+            { order: 2, text: 'Walk straight through the east wing hallway.' },
+            { order: 3, text: 'Room 203 will be nearby on your right.' }
+          ],
+          media: { videoId: null, blueprintImageId: 'b201-blueprint-f2-east-wing' }
+        },
+        {
+          id: 'b201-route-atrium-to-sample-210',
+          startLandmarkId: 'b201-atrium',
+          destinationRoomId: 'b201-room-sample-210',
+          targetFloor: 2,
+          routeType: 'default',
+          estimatedWalkMinutes: 4,
+          steps: [
+            { order: 1, text: 'From the atrium, go to the elevator core.' },
+            { order: 2, text: 'Take the elevator to floor 2.' },
+            { order: 3, text: 'Turn into the west corridor after exiting.' },
+            { order: 4, text: 'Continue until you reach Room 210.' }
+          ],
+          media: { videoId: 'b201-video-atrium-to-f2-west-wing', blueprintImageId: 'b201-blueprint-f2-west-wing' }
+        },
+        {
+          id: 'b201-route-lobby-to-sample-214',
+          startLandmarkId: 'b201-lobby',
+          destinationRoomId: 'b201-room-sample-214',
+          targetFloor: 2,
+          routeType: 'default',
+          estimatedWalkMinutes: 4,
+          steps: [
+            { order: 1, text: 'From the lobby, walk to the elevator area.' },
+            { order: 2, text: 'Go up to floor 2.' },
+            { order: 3, text: 'Turn into the west-side hallway.' },
+            { order: 4, text: 'Continue past the room cluster until Room 214 appears on the left.' }
+          ],
+          media: { videoId: 'b201-video-lobby-to-f2-west-wing', blueprintImageId: 'b201-blueprint-f2-west-wing' }
+        },
+        {
+          id: 'b201-route-elevator-core-to-sample-214',
+          startLandmarkId: 'b201-elevator-core',
+          destinationRoomId: 'b201-room-sample-214',
+          targetFloor: 2,
+          routeType: 'default',
+          estimatedWalkMinutes: 2,
+          steps: [
+            { order: 1, text: 'Take the elevator to floor 2.' },
+            { order: 2, text: 'Exit and turn toward the west corridor.' },
+            { order: 3, text: 'Walk straight until you arrive at Room 214.' }
+          ],
+          media: { videoId: 'b201-video-elevator-to-f2-west-wing', blueprintImageId: 'b201-blueprint-f2-west-wing' }
+        }
+      ];
+
+      const landmarkSelect = document.getElementById('landmark-select');
+      const roomSelect = document.getElementById('room-select');
+      const roomQuery = document.getElementById('room-query');
+      const roomChips = document.getElementById('room-chips');
+      const results = document.getElementById('results');
+      const form = document.getElementById('route-form');
+
+      function renderOptions() {
+        landmarks.filter((item) => item.userSelectable).forEach((landmark) => {
+          const option = document.createElement('option');
+          option.value = landmark.id;
+          option.textContent = landmark.name;
+          landmarkSelect.appendChild(option);
+        });
+
+        rooms.forEach((room) => {
+          const option = document.createElement('option');
+          option.value = room.id;
+          option.textContent = `Room ${room.roomNumber}`;
+          roomSelect.appendChild(option);
+        });
+
+        rooms.slice(0, 6).forEach((room) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'chip';
+          button.textContent = `Room ${room.roomNumber}`;
+          button.addEventListener('click', () => {
+            roomSelect.value = room.id;
+            roomQuery.value = room.roomNumber;
+          });
+          roomChips.appendChild(button);
+        });
+      }
+
+      function findRoomByQuery(query) {
+        const normalized = query.trim().toLowerCase();
+        if (!normalized) return null;
+
+        return rooms.find((room) => [room.roomNumber, room.name, ...(room.aliases || [])].some((value) => value.toLowerCase().includes(normalized)));
+      }
+
+      function findRoute(landmarkId, roomId) {
+        return routes.find((route) => route.startLandmarkId === landmarkId && route.destinationRoomId === roomId);
+      }
+
+      function renderEmpty(message) {
+        results.className = 'card card-pad empty';
+        results.textContent = message;
+      }
+
+      function renderRoute(route, room, landmark, zone, videoAsset, blueprintAsset) {
+        results.className = 'grid';
+        results.innerHTML = `
+          <section class="card card-pad summary">
+            <div>
+              <p class="section-title">Directions</p>
+              <h3 class="room-title">Room ${room.roomNumber}</h3>
+              <p class="route-copy">
+                Start at <strong style="color:#0f172a;">${landmark.name}</strong> and continue to the
+                <strong style="color:#0f172a;">${zone.name}</strong>.
+              </p>
+              <p class="demo-note">Demo route data</p>
+            </div>
+            <div class="summary-meta">
+              <div class="meta-row"><span>Floor</span><strong>${route.targetFloor}</strong></div>
+              <div class="meta-row"><span>Walk time</span><strong>${route.estimatedWalkMinutes} min</strong></div>
+              <div class="meta-row"><span>Route type</span><strong>${route.routeType}</strong></div>
+            </div>
+          </section>
+
+          <section class="card card-pad">
+            <p class="section-title">Step-by-step directions</p>
+            <div class="steps">
+              ${route.steps.map((step) => `
+                <article class="step">
+                  <div class="step-number">${step.order}</div>
+                  <p>${step.text}</p>
+                </article>
+              `).join('')}
+            </div>
+          </section>
+
+          <section class="card card-pad">
+            <p class="section-title">Reference media</p>
+            <div class="media-grid">
+              <article class="media-card">
+                <p class="mini-title">Video walkthrough</p>
+                <h4>${videoAsset ? videoAsset.title : 'No demo walkthrough linked'}</h4>
+                <p>${videoAsset ? `Linked by ID: ${videoAsset.id}. Path placeholder: ${videoAsset.path}` : 'This demo route currently has no linked walkthrough video.'}</p>
+              </article>
+              <article class="media-card">
+                <p class="mini-title">Blueprint reference</p>
+                <h4>${blueprintAsset ? blueprintAsset.title : 'No demo blueprint linked'}</h4>
+                <p>${blueprintAsset ? `Linked by ID: ${blueprintAsset.id}. Path placeholder: ${blueprintAsset.path}` : 'This demo route currently has no linked blueprint image.'}</p>
+              </article>
+            </div>
+          </section>
+        `;
+      }
+
+      roomSelect.addEventListener('change', () => {
+        const room = rooms.find((item) => item.id === roomSelect.value);
+        roomQuery.value = room ? room.roomNumber : '';
+      });
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const queryMatch = findRoomByQuery(roomQuery.value);
+        const roomId = queryMatch ? queryMatch.id : roomSelect.value;
+        const route = findRoute(landmarkSelect.value, roomId);
+
+        if (!route) {
+          renderEmpty('No demo route currently exists for that starting point and room combination. Try one of the suggested rooms.');
+          return;
+        }
+
+        const room = rooms.find((item) => item.id === route.destinationRoomId);
+        const landmark = landmarks.find((item) => item.id === route.startLandmarkId);
+        const zone = zones.find((item) => item.id === room.zoneId);
+        const videoAsset = route.media.videoId ? mediaAssets.find((item) => item.id === route.media.videoId) : null;
+        const blueprintAsset = route.media.blueprintImageId ? mediaAssets.find((item) => item.id === route.media.blueprintImageId) : null;
+
+        renderRoute(route, room, landmark, zone, videoAsset, blueprintAsset);
+      });
+
+      renderOptions();
+    </script>
+  </body>
+</html>
